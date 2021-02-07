@@ -86,19 +86,28 @@ public class CalculatorCommandTests {
         assertEquals((Object) 0, ctx.size());
     }
 
-    @Test(expected = CalculatorMathException.class)
+    @Test
     public void zeroDivisionFails() throws CalculatorException {
         var ctx = getDefaultContext();
         ctx.push(0.0);
         ctx.push(6.0);
-        (new DivCommand()).execute(ctx, new ArrayList<>());
+        try {
+            (new DivCommand()).execute(ctx, new ArrayList<>());
+        } catch (CalculatorMathException e) {
+            assertEquals((Object) (6.0), ctx.pop());
+            assertEquals((Object) (0.0), ctx.pop());
+        }
     }
 
-    @Test(expected = CalculatorMathException.class)
+    @Test
     public void negativeSqrtFails() throws CalculatorException {
         var ctx = getDefaultContext();
         ctx.push(-25.0);
-        (new SqrtCommand()).execute(ctx, new ArrayList<>());
+        try {
+            (new SqrtCommand()).execute(ctx, new ArrayList<>());
+        } catch (CalculatorMathException e) {
+            assertEquals((Object) (-25.0), ctx.pop());
+        }
     }
 
     @Test
@@ -133,5 +142,13 @@ public class CalculatorCommandTests {
     public void pushUndefinedFails() throws CalculatorException {
         var ctx = getDefaultContext();
         (new PushCommand()).execute(ctx, new ArrayList<>(List.of("UNDEF_VAR")));
+    }
+
+    @Test
+    public void commentWorks() throws CalculatorException {
+        var ctx = getDefaultContext();
+        var commentCommand = new CommentCommand();
+        commentCommand.execute(ctx, new ArrayList<>(List.of("123", "321")));
+        assertEquals((Object) 0, ctx.size());
     }
 }

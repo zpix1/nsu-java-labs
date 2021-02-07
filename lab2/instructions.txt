@@ -1,0 +1,17 @@
+DEFINE a 5
+PUSH a
+PUSH a
+*
+PUSH 25
+*
+SQRT
+# Should be 25.0
+PRINT
+PUSH -25
+# Should be error
+SQRT
+PUSH 0
+PUSH 6
+/
+PRINT
+

@@ -21,4 +21,16 @@ public class CalculatorExecutorTests {
         var result = out.toString();
         assertThat(result, CoreMatchers.containsString("20.0"));
     }
+
+    @Test
+    public void invalidProgramWorks() throws IOException {
+        var instructions = "DEFINE A 5\n DEFINE A 123\nPUSH A\nPUSH A\n*\nPUSH -50\n+\nSQRT\nPRINT";
+        var out = new ByteArrayOutputStream();
+        var outWriter = new OutputStreamWriter(out);
+        var executor = new Executor(new InputStreamReader(new ByteArrayInputStream(instructions.getBytes())), outWriter);
+        executor.execute();
+        outWriter.close();
+        var result = out.toString();
+        assertThat(result, CoreMatchers.containsString("-25.0"));
+    }
 }

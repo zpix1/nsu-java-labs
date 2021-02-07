@@ -28,6 +28,7 @@ public class Executor {
     }
 
     public void execute() throws IOException {
+        log.info("execution started");
         while (scanner.hasNext()) {
             var line = scanner.nextLine();
             var parsedCommand = parser.parseLine(line);
@@ -36,8 +37,9 @@ public class Executor {
                 var command = creator.createCommand(parsedCommand.commandText);
                 command.execute(ctx, parsedCommand.arguments);
             } catch (CalculatorException e) {
-                output.write("error while executing command " + parsedCommand.commandText + ": " + e.getLocalizedMessage() + "\n");
+                log.error("error while executing command " + parsedCommand.commandText + ": " + e.getLocalizedMessage());
             }
         }
+        log.info("execution completed");
     }
 }

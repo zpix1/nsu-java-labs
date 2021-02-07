@@ -21,6 +21,8 @@ public class DivCommand implements Command {
         var v1 = ctx.pop();
         var v2 = ctx.pop();
         if (v2 == 0) {
+            ctx.push(v2);
+            ctx.push(v1);
             throw new CalculatorMathException("zero division error");
         }
         ctx.push(v1 / v2);

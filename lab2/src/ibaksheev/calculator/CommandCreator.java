@@ -16,7 +16,7 @@ public class CommandCreator {
     Logger log = Logger.getLogger("GLOBAL");
 
     public CommandCreator() {
-        var scanner = new Scanner(this.getClass().getResourceAsStream(commandsResource)).useDelimiter("[ \n]");
+        var scanner = new Scanner(this.getClass().getResourceAsStream(commandsResource));
         commandClassNames = new HashMap<>();
         while (scanner.hasNext()) {
             commandClassNames.put(scanner.next(), scanner.next());
@@ -29,12 +29,11 @@ public class CommandCreator {
         if (className == null) {
             throw new CalculatorCommandException("command not found in " + commandsResource);
         }
-        log.debug("creating class from " + className.equals("ibaksheev.calculator.commands.PushCommand\n"));
+        log.debug("creating class from " + className);
         try {
             return (Command) Class.forName(className).getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | NullPointerException | InvocationTargetException | ClassNotFoundException e) {
-            log.error("got exception while creating command from " + className);
-            e.printStackTrace();
+            log.error("got exception while creating command from " + className + ": " + e.getLocalizedMessage());
             throw new CalculatorCommandException("invalid class");
         }
     }

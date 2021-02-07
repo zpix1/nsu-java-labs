@@ -20,6 +20,7 @@ public class SqrtCommand implements Command {
         }
         var v = ctx.pop();
         if (v < 0) {
+            ctx.push(v);
             throw new CalculatorMathException("negative sqrt is not supported");
         }
         ctx.push(Math.sqrt(v));

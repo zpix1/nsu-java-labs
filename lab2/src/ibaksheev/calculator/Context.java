@@ -53,7 +53,7 @@ public class Context {
 
     public void print(Double value) throws IOException {
         // should be changed to crossplatform version
-        System.out.println(value);
         output.write(value + "\n");
+        output.flush();
     }
 }
