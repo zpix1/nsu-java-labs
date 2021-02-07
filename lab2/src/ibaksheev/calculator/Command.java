@@ -1,4 +1,6 @@
-package ibaksheev;
+package ibaksheev.calculator;
+
+import ibaksheev.calculator.exceptions.CalculatorException;
 
 import java.util.List;
 
