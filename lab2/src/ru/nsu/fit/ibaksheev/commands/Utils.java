@@ -1,8 +1,8 @@
-package ibaksheev.calculator.commands;
+package ru.nsu.fit.ibaksheev.commands;
 
-import ibaksheev.calculator.exceptions.CalculatorArgumentException;
-import ibaksheev.calculator.exceptions.CalculatorException;
-import ibaksheev.calculator.Context;
+import ru.nsu.fit.ibaksheev.exceptions.CalculatorArgumentException;
+import ru.nsu.fit.ibaksheev.exceptions.CalculatorException;
+import ru.nsu.fit.ibaksheev.Context;
 
 import java.util.regex.Pattern;
 

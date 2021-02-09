@@ -1,4 +1,4 @@
-package ibaksheev.calculator.exceptions;
+package ru.nsu.fit.ibaksheev.exceptions;
 
 public class CalculatorCommandException extends CalculatorException{
     public CalculatorCommandException(String errorMessage) {

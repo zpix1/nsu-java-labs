@@ -1,7 +1,7 @@
-package ibaksheev.calculator.commands;
+package ru.nsu.fit.ibaksheev.commands;
 
-import ibaksheev.calculator.Command;
-import ibaksheev.calculator.Context;
+import ru.nsu.fit.ibaksheev.Command;
+import ru.nsu.fit.ibaksheev.Context;
 
 import java.util.List;
 

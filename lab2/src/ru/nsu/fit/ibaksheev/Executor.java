@@ -1,6 +1,6 @@
-package ibaksheev.calculator;
+package ru.nsu.fit.ibaksheev;
 
-import ibaksheev.calculator.exceptions.CalculatorException;
+import ru.nsu.fit.ibaksheev.exceptions.CalculatorException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

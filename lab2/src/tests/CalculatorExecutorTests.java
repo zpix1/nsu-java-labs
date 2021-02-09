@@ -1,10 +1,9 @@
 package tests;
 
-import ibaksheev.calculator.Executor;
+import ru.nsu.fit.ibaksheev.Executor;
 import org.junit.Test;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 

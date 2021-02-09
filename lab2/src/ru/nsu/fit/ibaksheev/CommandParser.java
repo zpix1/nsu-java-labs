@@ -1,4 +1,4 @@
-package ibaksheev.calculator;
+package ru.nsu.fit.ibaksheev;
 
 import java.util.ArrayList;
 import java.util.Scanner;
