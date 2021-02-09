@@ -11,20 +11,18 @@ import java.util.Scanner;
 import org.apache.log4j.Logger;
 
 public class Executor {
-    Logger log = Logger.getLogger("GLOBAL");
+    private final Scanner scanner;
+    private final Context ctx;
+    private final CommandParser parser;
+    private final CommandCreator creator;
 
-    Scanner scanner;
-    OutputStreamWriter output;
-    Context ctx;
-    CommandParser parser;
-    CommandCreator creator;
+    private final Logger log = Logger.getLogger("GLOBAL");
 
     public Executor(InputStreamReader source, OutputStreamWriter output) {
         ctx = new Context(output);
         parser = new CommandParser();
         creator = new CommandCreator();
         scanner = new Scanner(source);
-        this.output = output;
     }
 
     public void execute() throws IOException {

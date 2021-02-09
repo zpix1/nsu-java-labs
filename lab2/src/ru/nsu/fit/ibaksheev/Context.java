@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Stack;
 
 public class Context {
-    Stack<Double> stack;
-    Map<String, Double> defines;
-    OutputStreamWriter output;
+    private final Stack<Double> stack;
+    private final Map<String, Double> defines;
+    private final OutputStreamWriter output;
 
     public Context(OutputStreamWriter output) {
         stack = new Stack<>();

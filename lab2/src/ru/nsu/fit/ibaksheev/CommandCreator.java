@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class CommandCreator {
-    Map<String, String> commandClassNames;
-    static final String commandsResource = "/commands.conf";
+    private final Map<String, String> commandClassNames;
+    private static final String commandsResource = "/commands.conf";
 
-    Logger log = Logger.getLogger("GLOBAL");
+    private final Logger log = Logger.getLogger("GLOBAL");
 
     public CommandCreator() {
         var scanner = new Scanner(this.getClass().getResourceAsStream(commandsResource));
