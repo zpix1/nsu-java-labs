@@ -1,4 +1,4 @@
-package ibaksheev;
+package ru.nsu.fit.ibaksheev;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

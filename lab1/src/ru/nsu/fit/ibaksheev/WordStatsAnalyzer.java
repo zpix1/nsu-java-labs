@@ -1,7 +1,6 @@
-package ibaksheev;
+package ru.nsu.fit.ibaksheev;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.Scanner;
 
 class WordStatsAnalyzer {

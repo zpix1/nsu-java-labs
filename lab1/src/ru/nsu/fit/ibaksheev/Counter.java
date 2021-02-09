@@ -1,4 +1,4 @@
-package ibaksheev;
+package ru.nsu.fit.ibaksheev;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Counter<T> {
-    int total;
-    Map<T, Integer> stats = new HashMap<>();
+    private int total;
+    private final Map<T, Integer> stats = new HashMap<>();
 
     public void add(T value) {
         total++;
@@ -19,5 +19,9 @@ public class Counter<T> {
                 .entrySet()
                 .stream()
                 .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue())).collect(Collectors.toList());
+    }
+
+    public int getTotal() {
+        return total;
     }
 }
