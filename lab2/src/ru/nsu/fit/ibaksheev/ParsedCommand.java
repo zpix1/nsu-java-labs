@@ -11,4 +11,3 @@ public class ParsedCommand {
         this.arguments = arguments;
     }
 }
-

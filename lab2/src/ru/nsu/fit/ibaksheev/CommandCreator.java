@@ -29,7 +29,9 @@ public class CommandCreator {
         if (className == null) {
             throw new CalculatorCommandException("command not found in " + commandsResource);
         }
+
         log.debug("creating class from " + className);
+
         try {
             return (Command) Class.forName(className).getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | NullPointerException | InvocationTargetException | ClassNotFoundException e) {

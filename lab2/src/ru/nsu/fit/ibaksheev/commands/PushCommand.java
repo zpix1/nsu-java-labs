@@ -9,7 +9,6 @@ import ru.nsu.fit.ibaksheev.Context;
 import java.util.List;
 
 public class PushCommand implements Command {
-
     @Override
     public void execute(Context ctx, List<String> arguments) throws CalculatorException {
         if (arguments.size() != 1) {

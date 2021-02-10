@@ -8,6 +8,7 @@ public class CommandParser {
         var scanner = new Scanner(line).useDelimiter(" ");
         var commandText = scanner.next();
         var list = new ArrayList<String>();
+
         while (scanner.hasNext()) {
             list.add(scanner.next());
         }
