@@ -1,8 +1,9 @@
 package ru.nsu.fit.ibaksheev.lab2;
 
+import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.ibaksheev.lab2.exceptions.CalculatorCommandException;
 import ru.nsu.fit.ibaksheev.lab2.exceptions.CalculatorException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ public class CommandCreator {
     private final Map<String, String> commandClassNames;
     private static final String commandsResource = "/commands.conf";
 
-    private final Logger log = Logger.getLogger("GLOBAL");
+    private final Logger log = LogManager.getLogger("GLOBAL");
 
     public CommandCreator() {
         var scanner = new Scanner(this.getClass().getResourceAsStream(commandsResource));

@@ -1,5 +1,6 @@
 package ru.nsu.fit.ibaksheev.lab2;
 
+import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.ibaksheev.lab2.exceptions.CalculatorException;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.io.OutputStreamWriter;
 import java.util.Scanner;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class Executor {
     private final Scanner scanner;
@@ -16,7 +17,7 @@ public class Executor {
     private final CommandParser parser;
     private final CommandCreator creator;
 
-    private final Logger log = Logger.getLogger("GLOBAL");
+    private final Logger log = LogManager.getLogger("GLOBAL");
 
     public Executor(InputStreamReader source, OutputStreamWriter output) {
         ctx = new Context(output);
