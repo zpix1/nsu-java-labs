@@ -1,4 +1,4 @@
-package ru.nsu.fit.ibaksheev;
+package ru.nsu.fit.ibaksheev.lab2;
 
 import java.io.*;
 

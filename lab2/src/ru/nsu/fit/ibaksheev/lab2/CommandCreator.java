@@ -1,7 +1,7 @@
-package ru.nsu.fit.ibaksheev;
+package ru.nsu.fit.ibaksheev.lab2;
 
-import ru.nsu.fit.ibaksheev.exceptions.CalculatorCommandException;
-import ru.nsu.fit.ibaksheev.exceptions.CalculatorException;
+import ru.nsu.fit.ibaksheev.lab2.exceptions.CalculatorCommandException;
+import ru.nsu.fit.ibaksheev.lab2.exceptions.CalculatorException;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;

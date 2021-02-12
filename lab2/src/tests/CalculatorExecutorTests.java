@@ -1,6 +1,6 @@
 package tests;
 
-import ru.nsu.fit.ibaksheev.Executor;
+import ru.nsu.fit.ibaksheev.lab2.Executor;
 import org.junit.Test;
 
 import org.hamcrest.CoreMatchers;

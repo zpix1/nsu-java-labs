@@ -1,6 +1,6 @@
-package ru.nsu.fit.ibaksheev;
+package ru.nsu.fit.ibaksheev.lab2;
 
-import ru.nsu.fit.ibaksheev.exceptions.CalculatorException;
+import ru.nsu.fit.ibaksheev.lab2.exceptions.CalculatorException;
 
 import java.util.List;
 

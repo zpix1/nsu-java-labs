@@ -1,11 +1,11 @@
 package tests;
 
-import ru.nsu.fit.ibaksheev.commands.*;
-import ru.nsu.fit.ibaksheev.exceptions.CalculatorDefineException;
-import ru.nsu.fit.ibaksheev.exceptions.CalculatorException;
-import ru.nsu.fit.ibaksheev.Context;
-import ru.nsu.fit.ibaksheev.exceptions.CalculatorMathException;
-import ru.nsu.fit.ibaksheev.exceptions.CalculatorStackException;
+import ru.nsu.fit.ibaksheev.lab2.commands.*;
+import ru.nsu.fit.ibaksheev.lab2.exceptions.CalculatorDefineException;
+import ru.nsu.fit.ibaksheev.lab2.exceptions.CalculatorException;
+import ru.nsu.fit.ibaksheev.lab2.Context;
+import ru.nsu.fit.ibaksheev.lab2.exceptions.CalculatorMathException;
+import ru.nsu.fit.ibaksheev.lab2.exceptions.CalculatorStackException;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
