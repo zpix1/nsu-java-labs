@@ -1,12 +1,16 @@
 package ru.nsu.fit.ibaksheev.minesweeper;
 
-import java.util.Collection;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Model<P> {
-    private P property;
 
-    private final Collection<ModelSubscriber<P>> subscribers = new CopyOnWriteArrayList<ModelSubscriber<P>>();
+    private final P property;
+
+    private final Multimap<String, ModelSubscriber<P>> subscribers = HashMultimap.create();
 
     public Model(P property) {
         if (property == null) {
@@ -19,8 +23,8 @@ public class Model<P> {
         return property;
     }
 
-    protected void notifySubscribers() {
-        for (final ModelSubscriber<P> subscriber : subscribers) {
+    protected void notifySubscribers(String event) {
+        for (final ModelSubscriber<P> subscriber : subscribers.get(event)) {
             notifySubscriber(subscriber);
         }
     }
@@ -29,24 +33,24 @@ public class Model<P> {
         subscriber.modelChanged(this);
     }
 
-    public void subscribe(ModelSubscriber<P> subscriber) {
+    public void subscribe(ModelSubscriber<P> subscriber, String event) {
         if (subscriber == null) {
             throw new NullPointerException("Void subscriber");
         }
-        if (subscribers.contains(subscriber)) {
+        if (subscribers.get(event).contains(subscriber)) {
             throw new IllegalArgumentException("Repeated subscribe: " + subscriber);
         }
-        subscribers.add(subscriber);
+        subscribers.get(event).add(subscriber);
         notifySubscriber(subscriber);
     }
 
-    public void unsubscribe(ModelSubscriber<P> subscriber) {
+    public void unsubscribe(ModelSubscriber<P> subscriber, String event) {
         if (subscriber == null) {
             throw new NullPointerException("Void subscriber");
         }
-        if (!subscribers.contains(subscriber)) {
+        if (!subscribers.get(event).contains(subscriber)) {
             throw new IllegalArgumentException("No such subscriber: " + subscriber);
         }
-        subscribers.remove(subscriber);
+        subscribers.get(event).remove(subscriber);
     }
 }
