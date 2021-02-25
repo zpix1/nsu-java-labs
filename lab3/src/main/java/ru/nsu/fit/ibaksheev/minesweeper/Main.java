@@ -9,7 +9,7 @@ import ru.nsu.fit.ibaksheev.minesweeper.view.text.GameTextView;
 
 public class Main {
     public static void main(String[] args) {
-        var model = new GameModel(9, 9, 10);
+        var model = new GameModel();
         var controller = new GameController(model);
         View<GameData> view = new GameTextView(model, controller);
 

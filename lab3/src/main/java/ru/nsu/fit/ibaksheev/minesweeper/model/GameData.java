@@ -8,7 +8,7 @@ public class GameData {
 
     int width, height, mineCount;
 
-    GameData(int width, int height, int mineCount) {
+    public GameData(int width, int height, int mineCount) {
         this.width = width;
         this.height = height;
         this.mineCount = mineCount;

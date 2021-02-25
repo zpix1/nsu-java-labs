@@ -5,19 +5,26 @@ import com.google.common.collect.Multimap;
 
 public class Model<P> {
 
-    private final P property;
+    private P property;
 
     private final Multimap<String, ModelSubscriber<P>> subscribers = HashMultimap.create();
 
     public Model(P property) {
-        if (property == null) {
-            throw new NullPointerException("Null property");
-        }
         this.property = property;
     }
 
     protected P getProperty() {
+        if (property == null) {
+            throw new NullPointerException("Attempt to get null property");
+        }
         return property;
+    }
+
+    protected void setProperty(P property) {
+        if (property == null) {
+            throw new NullPointerException("Attempt to set null property");
+        }
+        this.property = property;
     }
 
     protected void notifySubscribers(String event) {

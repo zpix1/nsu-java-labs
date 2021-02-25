@@ -60,25 +60,47 @@ public class GameTextView implements View<GameData> {
     public void start() {
         out.println("Welcome to MineSweeper!");
 
+        controller.newGame(9, 9, 10);
+
         model.subscribe(model -> {
             // TODO: Is it okay?
             out.println("You lost!");
             lost = true;
         }, "lost");
 
+        model.subscribe(model -> out.println("Whole field update!"), "wholeFieldUpdate");
+
         while (true) {
             printField();
-            out.println("Enter x (1 - " + model.getWidth() + "): ");
-            var x = in.nextInt();
 
-            out.println("Enter y (1 - " + model.getHeight() + "): ");
-            var y = in.nextInt();
+            out.print("Enter command [S]hoot X Y, [F]lag X Y, [N]ew game, e[X]it: ");
 
-            try {
-                controller.shot(x - 1, y - 1);
-            } catch (InvalidArgumentException e) {
-                out.println("Invalid coordinates: " + x + " " + y);
-                continue;
+            var line = in.next();
+
+            if (line.startsWith("S")) {
+                out.print("You shoot! Enter X Y: ");
+                var x = in.nextInt();
+                var y = in.nextInt();
+                try {
+                    controller.shot(x - 1, y - 1);
+                } catch (InvalidArgumentException e) {
+                    out.println("Invalid coordinates: " + x + " " + y);
+                    continue;
+                }
+            } else if (line.startsWith("F")) {
+                out.print("You flag! Enter X Y: ");
+                var x = in.nextInt();
+                var y = in.nextInt();
+                try {
+                    controller.flag(x - 1, y - 1);
+                } catch (InvalidArgumentException e) {
+                    out.println("Invalid coordinates: " + x + " " + y);
+                    continue;
+                }
+            } else if (line.startsWith("N")) {
+                controller.newGame(9, 9, 10);
+            } else if (line.startsWith("X")) {
+                break;
             }
 
             if (lost) {
