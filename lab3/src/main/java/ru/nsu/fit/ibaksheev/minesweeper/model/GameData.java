@@ -1,20 +1,8 @@
-package ru.nsu.fit.ibaksheev.minesweeper;
+package ru.nsu.fit.ibaksheev.minesweeper.model;
 
 public class GameData {
-    enum Type {
-        Empty,
-        Unknown,
-        Flag,
-        Mine
-    };
-
-    static class FieldCellState {
-        Type type;
-        int value;
-    }
-
-    private FieldCellState[][] realField;
-    private FieldCellState[][] playerField;
+    FieldCellState[][] realField;
+    FieldCellState[][] playerField;
 
     boolean firstShotDone = false;
 
@@ -30,8 +18,8 @@ public class GameData {
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                playerField[i][j].type = Type.Unknown;
-                realField[i][j].type = Type.Unknown;
+                playerField[i][j] = new FieldCellState(FieldCellState.Type.Unknown, 0);
+                realField[i][j] = new FieldCellState(FieldCellState.Type.Unknown, 0);
             }
         }
     }

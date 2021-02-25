@@ -1,10 +1,7 @@
-package ru.nsu.fit.ibaksheev.minesweeper;
+package ru.nsu.fit.ibaksheev.minesweeper.model;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Model<P> {
 
@@ -19,7 +16,7 @@ public class Model<P> {
         this.property = property;
     }
 
-    public P getProperty() {
+    protected P getProperty() {
         return property;
     }
 
@@ -41,7 +38,7 @@ public class Model<P> {
             throw new IllegalArgumentException("Repeated subscribe: " + subscriber);
         }
         subscribers.get(event).add(subscriber);
-        notifySubscriber(subscriber);
+//        notifySubscriber(subscriber);
     }
 
     public void unsubscribe(ModelSubscriber<P> subscriber, String event) {
