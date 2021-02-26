@@ -37,7 +37,7 @@ public class GameTextView extends GameView {
 
     private void printField(FieldCellState[][] field) {
         out.print(' ');
-        for (int i = 0; i < field.length; i++) {
+        for (int i = 0; i < field[0].length; i++) {
             out.print(i + 1);
         }
         out.println();
@@ -55,7 +55,7 @@ public class GameTextView extends GameView {
     public void start() {
         out.println("Welcome to MineSweeper!");
 
-        controller.newGame(5, 5, 1);
+        controller.newGame(3, 2, 1);
 
         model.subscribe(model -> {
             // TODO: Is it okay?

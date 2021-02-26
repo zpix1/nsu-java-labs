@@ -73,26 +73,26 @@ public class GameModel extends Model<GameData> {
             indexes.add(i);
         }
 
-        indexes.remove((Integer) (y * data.height + x));
+        indexes.remove((Integer) (y * data.width + x));
         for (var neighbour : NEIGHBOURS) {
             int mx = x + neighbour[0];
             int my = y + neighbour[1];
-            indexes.remove((Integer) (my * data.height + mx));
+            indexes.remove((Integer) (my * data.width + mx));
         }
 
         // Shuffle and set mines
         Collections.shuffle(indexes);
         for (int i = 0; i < data.mineCount; i++) {
             int idx = indexes.get(i);
-            data.realField[idx % data.height][idx / data.height].type = FieldCellState.Type.Mine;
+            data.realField[idx % data.width][idx / data.width].type = FieldCellState.Type.Mine;
         }
 
         // Calculate digits for player
         for (int i = 0; i < data.mineCount; i++) {
             int idx = indexes.get(i);
             for (var neighbour : NEIGHBOURS) {
-                int mx = idx % data.height + neighbour[0];
-                int my = idx / data.height + neighbour[1];
+                int mx = idx % data.width + neighbour[0];
+                int my = idx / data.width + neighbour[1];
                 if (checkCoordinates(mx, my)) {
                     data.playerField[mx][my].value++;
                 }

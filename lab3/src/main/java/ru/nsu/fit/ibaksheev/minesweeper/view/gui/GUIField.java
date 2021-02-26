@@ -30,7 +30,9 @@ public class GUIField extends JPanel {
     public void updateField(FieldCellState[][] field) {
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
-                ((GUIFieldCell)getComponent(i * field.length + j)).setState(field[i][j]);
+                ((GUIFieldCell)getComponent(i * field[0].length + j)).setState(field[i][j]);
+//                var c = (GUIFieldCell)getComponent(i * field.length + j);
+//                System.out.println(c.getFieldX() + " " + c.getFieldY());
             }
         }
     }

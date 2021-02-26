@@ -25,7 +25,7 @@ public class GameGUIView extends GameView {
         }
     }
 
-    Settings defaultSettings = new Settings(9, 9, 10);
+    Settings defaultSettings = new Settings(10, 5, 1);
 
     public GameGUIView(GameModel model, GameController controller) {
         super(model, controller);
@@ -36,6 +36,7 @@ public class GameGUIView extends GameView {
         public void mouseClicked(MouseEvent e) {
             super.mouseClicked(e);
             var cell = (GUIFieldCell) e.getSource();
+            System.out.println("Clicked: "+ cell.getFieldX() + " " + cell.getFieldY());
             if (e.getButton() == MouseEvent.BUTTON3) {
                 try {
                     controller.flag(cell.getFieldX(), cell.getFieldY());
@@ -54,22 +55,44 @@ public class GameGUIView extends GameView {
 
     private JMenu createGameMenu() {
         var game = new JMenu("Game");
+        var exit = new JMenuItem("Exit");
+        exit.addActionListener(event -> exit());
+
+        var scores = new JMenuItem("Scores");
+        scores.addActionListener(event -> showScores());
+
         var newGame = new JMenu("New game");
         var easy = new JMenuItem("Easy");
-        easy.setName("new-game-easy");
+        easy.addActionListener(event -> {
+            defaultSettings.width = 9;
+            defaultSettings.height = 9;
+            defaultSettings.minesCount = 10;
+            newGameWithSettings();
+        });
         var medium = new JMenuItem("Medium");
-        medium.setName("new-game-medium");
+        medium.addActionListener(event -> {
+            defaultSettings.width = 20;
+            defaultSettings.height = 10;
+            defaultSettings.minesCount = 22;
+            newGameWithSettings();
+        });
         var hard = new JMenuItem("Hard");
-        hard.setName("new-game-hard");
+        hard.addActionListener(event -> {
+            defaultSettings.width = 30;
+            defaultSettings.height = 20;
+            defaultSettings.minesCount = 80;
+            newGameWithSettings();
+        });
         newGame.add(easy); newGame.add(medium); newGame.add(hard);
         game.add(newGame);
+        game.add(scores);
+        game.add(exit);
         return game;
     }
 
     @Override
     public void start() {
-        controller.newGame(9, 9, 10);
-
+        newGameWithSettings();
 
         window = new JFrame("Minesweeper");
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -117,4 +140,14 @@ public class GameGUIView extends GameView {
         newGameWithSettings();
     }
 
+
+    private void showScores() {
+        JOptionPane.showInternalMessageDialog(null, "Scores",
+                "TODO", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
+    private void exit() {
+        System.exit(0);
+    }
 }
