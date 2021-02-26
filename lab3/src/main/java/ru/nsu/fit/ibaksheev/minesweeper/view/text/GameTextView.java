@@ -3,19 +3,21 @@ package ru.nsu.fit.ibaksheev.minesweeper.view.text;
 import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
 import ru.nsu.fit.ibaksheev.minesweeper.model.*;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
+import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
 import ru.nsu.fit.ibaksheev.minesweeper.view.View;
 
 import java.io.PrintStream;
 import java.util.Scanner;
 
-public class GameTextView implements View<GameData> {
+public class GameTextView extends GameView {
     private final PrintStream out = System.out;
     private final Scanner in = new Scanner(System.in);
 
-    final private GameModel model;
-    final private GameController controller;
-
     private boolean endGame = false;
+
+    public GameTextView(GameModel model, GameController controller) {
+        super(model, controller);
+    }
 
     private char stateToChar(FieldCellState state) {
         if (state.type == FieldCellState.Type.Empty) {
@@ -47,11 +49,6 @@ public class GameTextView implements View<GameData> {
             }
             out.println();
         }
-    }
-
-    public GameTextView(GameModel model, GameController controller) {
-        this.model = model;
-        this.controller = controller;
     }
 
     @Override
