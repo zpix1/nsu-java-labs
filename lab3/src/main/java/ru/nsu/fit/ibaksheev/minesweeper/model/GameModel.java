@@ -17,7 +17,7 @@ public class GameModel extends Model<GameData> {
 
     public void setGameData(GameData data) {
         this.setProperty(data);
-        notifySubscribers("wholeFieldUpdate");
+        notifySubscribers("reset");
     }
 
     private boolean checkCoordinates(int x, int y) {
@@ -117,6 +117,7 @@ public class GameModel extends Model<GameData> {
         } else if (data.playerField[x][y].type == FieldCellState.Type.Flag) {
             data.playerField[x][y].type = FieldCellState.Type.Unknown;
         }
+        notifySubscribers("wholeFieldUpdate");
     }
 
     private boolean isGameComplete() {
@@ -139,9 +140,9 @@ public class GameModel extends Model<GameData> {
         return getProperty().playerField;
     }
 
-    public FieldCellState[][] getRealField() {
-        return getProperty().realField;
-    }
+//    public FieldCellState[][] getRealField() {
+//        return getProperty().realField;
+//    }
 
     public int getWidth() {
         return getProperty().width;

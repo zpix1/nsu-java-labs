@@ -70,10 +70,12 @@ public class GameTextView extends GameView {
         }, "won");
 
         model.subscribe(model -> out.println("Whole field update!"), "wholeFieldUpdate");
+        model.subscribe(model -> out.println("Reset!"), "reset");
+
 
         while (true) {
-            out.println("Real field");
-            printField(model.getRealField());
+//            out.println("Real field");
+//            printField(model.getRealField());
             out.println("Player field");
             printField(model.getPlayerField());
 
