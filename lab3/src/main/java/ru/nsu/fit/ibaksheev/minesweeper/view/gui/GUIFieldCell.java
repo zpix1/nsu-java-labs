@@ -32,7 +32,7 @@ public class GUIFieldCell extends JButton {
                         c = Color.blue;
                         break;
                     case 2:
-                        c = new Color(60, 63, 65);
+                        c = new Color(38, 120, 46);
                         break;
                     case 3:
                         c = new Color(216, 86, 77);
