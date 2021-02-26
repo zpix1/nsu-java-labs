@@ -25,7 +25,7 @@ public class GameGUIView extends GameView {
         }
     }
 
-    Settings defaultSettings = new Settings(10, 5, 1);
+    Settings defaultSettings = new Settings(9, 9, 10);
 
     public GameGUIView(GameModel model, GameController controller) {
         super(model, controller);
@@ -36,7 +36,6 @@ public class GameGUIView extends GameView {
         public void mouseClicked(MouseEvent e) {
             super.mouseClicked(e);
             var cell = (GUIFieldCell) e.getSource();
-            System.out.println("Clicked: "+ cell.getFieldX() + " " + cell.getFieldY());
             if (e.getButton() == MouseEvent.BUTTON3) {
                 try {
                     controller.flag(cell.getFieldX(), cell.getFieldY());
@@ -60,6 +59,9 @@ public class GameGUIView extends GameView {
 
         var scores = new JMenuItem("Scores");
         scores.addActionListener(event -> showScores());
+
+        var about = new JMenuItem("About");
+        about.addActionListener(event -> about());
 
         var newGame = new JMenu("New game");
         var easy = new JMenuItem("Easy");
@@ -86,6 +88,7 @@ public class GameGUIView extends GameView {
         newGame.add(easy); newGame.add(medium); newGame.add(hard);
         game.add(newGame);
         game.add(scores);
+        game.add(about);
         game.add(exit);
         return game;
     }
@@ -142,8 +145,12 @@ public class GameGUIView extends GameView {
 
 
     private void showScores() {
-        JOptionPane.showInternalMessageDialog(null, "Scores",
-                "TODO", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showInternalMessageDialog(null, "Todo...",
+                "Scores", JOptionPane.INFORMATION_MESSAGE);
+    }
+    private void about() {
+        JOptionPane.showInternalMessageDialog(null, "Minesweeper v0.1\nMade by Ivan Baksheev <zpix-dev@list.ru>",
+                "About", JOptionPane.INFORMATION_MESSAGE);
     }
 
 
