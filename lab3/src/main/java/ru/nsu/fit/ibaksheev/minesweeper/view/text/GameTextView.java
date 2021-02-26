@@ -2,7 +2,6 @@ package ru.nsu.fit.ibaksheev.minesweeper.view.text;
 
 import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
 import ru.nsu.fit.ibaksheev.minesweeper.model.*;
-import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.GameException;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 import ru.nsu.fit.ibaksheev.minesweeper.view.View;
 
@@ -13,10 +12,10 @@ public class GameTextView implements View<GameData> {
     private final PrintStream out = System.out;
     private final Scanner in = new Scanner(System.in);
 
-    private GameModel model;
-    private GameController controller;
+    final private GameModel model;
+    final private GameController controller;
 
-    private boolean lost = false;
+    private boolean endGame = false;
 
     private char stateToChar(FieldCellState state) {
         if (state.type == FieldCellState.Type.Empty) {
@@ -34,8 +33,7 @@ public class GameTextView implements View<GameData> {
         return '?';
     }
 
-    private void printField() {
-        var field = model.getPlayerField();
+    private void printField(FieldCellState[][] field) {
         out.print(' ');
         for (int i = 0; i < field.length; i++) {
             out.print(i + 1);
@@ -60,35 +58,44 @@ public class GameTextView implements View<GameData> {
     public void start() {
         out.println("Welcome to MineSweeper!");
 
-        controller.newGame(9, 9, 10);
+        controller.newGame(5, 5, 1);
 
         model.subscribe(model -> {
             // TODO: Is it okay?
             out.println("You lost!");
-            lost = true;
+            endGame = true;
         }, "lost");
+
+        model.subscribe(model -> {
+            // TODO: Is it okay?
+            out.println("You won! Congratulations!");
+            endGame = true;
+        }, "won");
 
         model.subscribe(model -> out.println("Whole field update!"), "wholeFieldUpdate");
 
         while (true) {
-            printField();
+            out.println("Real field");
+            printField(model.getRealField());
+            out.println("Player field");
+            printField(model.getPlayerField());
 
-            out.print("Enter command [S]hoot X Y, [F]lag X Y, [N]ew game, e[X]it: ");
+            out.print("Enter command [S]hoot Y X, [F]lag Y X, [N]ew game, e[X]it: ");
 
             var line = in.next();
 
             if (line.startsWith("S")) {
-                out.print("You shoot! Enter X Y: ");
+                out.println("You shoot! Enter Y X: ");
                 var x = in.nextInt();
                 var y = in.nextInt();
                 try {
-                    controller.shot(x - 1, y - 1);
+                    controller.shoot(x - 1, y - 1);
                 } catch (InvalidArgumentException e) {
                     out.println("Invalid coordinates: " + x + " " + y);
                     continue;
                 }
             } else if (line.startsWith("F")) {
-                out.print("You flag! Enter X Y: ");
+                out.println("You flag! Enter X Y: ");
                 var x = in.nextInt();
                 var y = in.nextInt();
                 try {
@@ -103,8 +110,9 @@ public class GameTextView implements View<GameData> {
                 break;
             }
 
-            if (lost) {
-                break;
+            if (endGame) {
+                out.println("Thanks for playing a game!");
+                controller.newGame(9, 9, 10);
             }
         }
     }
