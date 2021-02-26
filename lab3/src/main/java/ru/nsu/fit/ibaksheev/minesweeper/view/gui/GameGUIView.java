@@ -15,6 +15,18 @@ public class GameGUIView extends GameView {
 
     private JFrame window;
 
+    static class Settings {
+        public int width, height, minesCount;
+
+        public Settings(int width, int height, int minesCount) {
+            this.width = width;
+            this.height = height;
+            this.minesCount = minesCount;
+        }
+    }
+
+    Settings defaultSettings = new Settings(9, 9, 10);
+
     public GameGUIView(GameModel model, GameController controller) {
         super(model, controller);
     }
@@ -24,7 +36,6 @@ public class GameGUIView extends GameView {
         public void mouseClicked(MouseEvent e) {
             super.mouseClicked(e);
             var cell = (GUIFieldCell) e.getSource();
-            System.out.println(cell.getFieldX() + " " + cell.getFieldY());
             if (e.getButton() == MouseEvent.BUTTON3) {
                 try {
                     controller.flag(cell.getFieldX(), cell.getFieldY());
@@ -41,53 +52,69 @@ public class GameGUIView extends GameView {
         }
     };
 
+    private JMenu createGameMenu() {
+        var game = new JMenu("Game");
+        var newGame = new JMenu("New game");
+        var easy = new JMenuItem("Easy");
+        easy.setName("new-game-easy");
+        var medium = new JMenuItem("Medium");
+        medium.setName("new-game-medium");
+        var hard = new JMenuItem("Hard");
+        hard.setName("new-game-hard");
+        newGame.add(easy); newGame.add(medium); newGame.add(hard);
+        game.add(newGame);
+        return game;
+    }
+
     @Override
     public void start() {
-        controller.newGame(5, 5, 1);
+        controller.newGame(9, 9, 10);
+
 
         window = new JFrame("Minesweeper");
+        JFrame.setDefaultLookAndFeelDecorated(true);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setSize(500, 500);
 
+        var menuBar = new JMenuBar();
+        menuBar.add(createGameMenu());
+        window.setJMenuBar(menuBar);
 
         var field = new GUIField();
 
-        model.subscribe(model -> {
-            lost();
-        }, "lost");
+        model.subscribe(model -> lost(), "lost");
+
+        model.subscribe(model -> won(), "won");
+
+        model.subscribe(model -> field.updateField(this.model.getPlayerField()), "wholeFieldUpdate");
 
         model.subscribe(model -> {
-            won();
-        }, "won");
-
-        model.subscribe(model -> {
-            field.updateField(this.model.getPlayerField());
-        }, "wholeFieldUpdate");
-
-        model.subscribe(model -> {
-            System.out.println("reset");
             System.out.println(this.model.getPlayerField().length);
             field.setField(this.model.getPlayerField(), adapter);
             window.setVisible(true);
         }, "reset");
 
+
         field.setField(model.getPlayerField(), adapter);
 
         window.add(field);
-
         window.setVisible(true);
     }
 
+    private void newGameWithSettings() {
+        controller.newGame(defaultSettings.width, defaultSettings.height, defaultSettings.minesCount);
+    }
+
     private void lost() {
-        JOptionPane.showInternalMessageDialog(null, "You lost...",
-                "I am sorry, but you just exploded!", JOptionPane.INFORMATION_MESSAGE);
-        controller.newGame(9, 9, 10);
+        JOptionPane.showInternalMessageDialog(null,
+                "I am sorry, but you just exploded!", "You lost...", JOptionPane.INFORMATION_MESSAGE);
+        newGameWithSettings();
     }
 
     private void won() {
         JOptionPane.showInternalMessageDialog(null, "You won!",
                 "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
-        controller.newGame(9, 9, 10);
+        newGameWithSettings();
     }
 
 }

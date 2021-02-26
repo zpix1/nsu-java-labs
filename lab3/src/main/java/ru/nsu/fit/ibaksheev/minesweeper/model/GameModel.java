@@ -42,16 +42,18 @@ public class GameModel extends Model<GameData> {
             data.firstShotDone = true;
         } else {
             if (data.realField[x][y].type == FieldCellState.Type.Mine) {
+                data.playerField[x][y].type = FieldCellState.Type.Mine;
+                notifySubscribers("wholeFieldUpdate");
                 notifySubscribers("lost");
                 return;
             }
             data.playerField[x][y].type = FieldCellState.Type.Empty;
             emptyFieldDFS(x, y);
         }
+        notifySubscribers("wholeFieldUpdate");
         if (isGameComplete()) {
             notifySubscribers("won");
         }
-        notifySubscribers("wholeFieldUpdate");
     }
 
     private void fillFields(int x, int y) {
@@ -68,9 +70,14 @@ public class GameModel extends Model<GameData> {
         // Create indexes range
         List<Integer> indexes = new ArrayList<>();
         for (int i = 0; i < data.width * data.height; i++) {
-            if (i != y * data.height + x) {
-                indexes.add(i);
-            }
+            indexes.add(i);
+        }
+
+        indexes.remove((Integer) (y * data.height + x));
+        for (var neighbour : NEIGHBOURS) {
+            int mx = x + neighbour[0];
+            int my = y + neighbour[1];
+            indexes.remove((Integer) (my * data.height + mx));
         }
 
         // Shuffle and set mines

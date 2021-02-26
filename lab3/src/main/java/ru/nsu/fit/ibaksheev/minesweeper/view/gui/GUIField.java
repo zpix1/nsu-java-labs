@@ -15,13 +15,10 @@ public class GUIField extends JPanel {
 
     public void setField(FieldCellState[][] field, MouseAdapter fieldCellMouseListener) {
         removeAll();
-        System.out.println("field");
-        System.out.println(field.length + " " + field[0].length);
         setLayout(new GridLayout(field.length, field[0].length));
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
                 var cell = new GUIFieldCell(i, j);
-                System.out.println("New cell");
                 cell.addMouseListener(fieldCellMouseListener);
                 cell.setState(field[i][j]);
                 cell.setFocusPainted(false);
