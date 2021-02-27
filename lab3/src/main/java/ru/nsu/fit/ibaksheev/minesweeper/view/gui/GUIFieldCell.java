@@ -7,25 +7,29 @@ import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
 
 public class GUIFieldCell extends JButton {
+    public static int CELL_SIZE = 45;
+    public static float FONT_SIZE = 15f;
+
     private FieldCellState state;
     private final int vx;
     private final int vy;
 
     public GUIFieldCell(int x, int y) {
+        setSize(CELL_SIZE, CELL_SIZE);
         this.vx = x;
         this.vy = y;
     }
 
     public void setState(FieldCellState state) {
+        setFont(getFont().deriveFont(Font.BOLD));
+        setFont(getFont().deriveFont(FONT_SIZE));
         if (state.type == FieldCellState.Type.Unknown) {
-            setText(" ");
+            setText("");
         } else if (state.type == FieldCellState.Type.Empty) {
             if (state.value == 0) {
                 setText(" ");
             } else {
                 setText(String.valueOf(Integer.toString(state.value).charAt(0)));
-                setFont(getFont().deriveFont(Font.BOLD));
-                setFont(getFont().deriveFont(20f));
                 final Color c;
                 switch (state.value) {
                     case 1:

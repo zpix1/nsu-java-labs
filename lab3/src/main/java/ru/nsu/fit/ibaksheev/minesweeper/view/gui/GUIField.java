@@ -10,9 +10,6 @@ import java.awt.event.MouseAdapter;
 
 public class GUIField extends JPanel {
 
-    public GUIField() {
-    }
-
     public void setField(FieldCellState[][] field, MouseAdapter fieldCellMouseListener) {
         removeAll();
         setLayout(new GridLayout(field.length, field[0].length));

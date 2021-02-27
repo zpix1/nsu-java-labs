@@ -33,8 +33,8 @@ public class GameGUIView extends GameView {
 
     MouseAdapter adapter = new MouseAdapter() {
         @Override
-        public void mouseClicked(MouseEvent e) {
-            super.mouseClicked(e);
+        public void mousePressed(MouseEvent e) {
+            super.mousePressed(e);
             var cell = (GUIFieldCell) e.getSource();
             if (e.getButton() == MouseEvent.BUTTON3) {
                 try {
@@ -73,15 +73,15 @@ public class GameGUIView extends GameView {
         });
         var medium = new JMenuItem("Medium");
         medium.addActionListener(event -> {
-            defaultSettings.width = 20;
-            defaultSettings.height = 10;
+            defaultSettings.width = 10;
+            defaultSettings.height = 20;
             defaultSettings.minesCount = 22;
             newGameWithSettings();
         });
         var hard = new JMenuItem("Hard");
         hard.addActionListener(event -> {
-            defaultSettings.width = 30;
-            defaultSettings.height = 20;
+            defaultSettings.width = 20;
+            defaultSettings.height = 30;
             defaultSettings.minesCount = 80;
             newGameWithSettings();
         });
@@ -95,18 +95,18 @@ public class GameGUIView extends GameView {
 
     @Override
     public void start() {
-        newGameWithSettings();
-
         window = new JFrame("Minesweeper");
         JFrame.setDefaultLookAndFeelDecorated(true);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setSize(500, 500);
+        window.setResizable(false);
 
         var menuBar = new JMenuBar();
         menuBar.add(createGameMenu());
         window.setJMenuBar(menuBar);
 
         var field = new GUIField();
+
+        newGameWithSettings();
 
         model.subscribe(model -> lost(), "lost");
 
@@ -128,6 +128,7 @@ public class GameGUIView extends GameView {
     }
 
     private void newGameWithSettings() {
+        window.setSize(defaultSettings.height * GUIFieldCell.CELL_SIZE, defaultSettings.width * GUIFieldCell.CELL_SIZE);
         controller.newGame(defaultSettings.width, defaultSettings.height, defaultSettings.minesCount);
     }
 
