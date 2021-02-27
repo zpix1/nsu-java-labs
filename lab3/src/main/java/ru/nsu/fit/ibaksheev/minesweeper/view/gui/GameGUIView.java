@@ -1,20 +1,30 @@
 package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 
+import org.joda.time.Duration;
+import ru.nsu.fit.ibaksheev.minesweeper.Utils;
 import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
+import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsManager;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
 
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Vector;
 
 public class GameGUIView extends GameView {
 
     private JFrame window;
+    private JLabel timerField;
+    private GUIField field;
 
-    GameData.Settings defaultSettings = new GameData.Settings(9, 9, 10);
+    SettingsManager settingsManager = new SettingsManager();
+
+    SettingsManager.Settings defaultSettings = settingsManager.getFirstSettings();
 
     public GameGUIView(GameModel model, GameController controller) {
         super(model, controller);
@@ -53,7 +63,7 @@ public class GameGUIView extends GameView {
         about.addActionListener(event -> about());
 
         var newGame = new JMenu("New game");
-        for (var entry : model.settingsManager.getSettingsList()) {
+        for (var entry : settingsManager.getSettingsList()) {
             var settings = entry.getValue();
             var settingMenu = new JMenuItem(settings.getName());
             settingMenu.addActionListener(event -> {
@@ -71,18 +81,51 @@ public class GameGUIView extends GameView {
 
     @Override
     public void start() {
+        SwingUtilities.invokeLater(this::startGUI);
+    }
+
+    public void startGUI() {
         window = new JFrame("Minesweeper");
-        JFrame.setDefaultLookAndFeelDecorated(true);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                dispose();
+            }
+        });
         window.setResizable(false);
+        window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
 
         var menuBar = new JMenuBar();
         menuBar.add(createGameMenu());
         window.setJMenuBar(menuBar);
 
-        var field = new GUIField();
+        // TODO: How to align it?
+        timerField = new JLabel("");
+        timerField.setHorizontalAlignment(SwingConstants.CENTER);
+        window.add(timerField);
 
-        newGameWithSettings();
+        // TODO: Where to create timer thread?
+        var timerThread = new Thread(() -> {
+            while (true) {
+                if (model.propertyExist() && model.getState() == GameData.State.STARTED) {
+//                    https://stackoverflow.com/questions/1555262/calculating-the-difference-between-two-java-date-instances
+                    var duration = new Duration(model.getStartedAt().getTime(), new Date().getTime());
+                    timerField.setText(Utils.formatDuration(duration));
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        timerThread.start();
+
+        field = new GUIField();
+
+        controller.loadOrStartNew(defaultSettings);
 
         model.subscribe(model -> lost(), "lost");
 
@@ -93,39 +136,71 @@ public class GameGUIView extends GameView {
         model.subscribe(model -> field.updateFieldCell(this.model.getPlayerField(), this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY()), "fieldCellUpdate");
 
         model.subscribe(model -> {
-            System.out.println(this.model.getPlayerField().length);
             field.setField(this.model.getPlayerField(), adapter);
             window.setVisible(true);
         }, "reset");
 
         field.setField(model.getPlayerField(), adapter);
 
+        resize();
         window.add(field);
         window.setVisible(true);
     }
 
+    private void dispose() {
+        controller.dispose();
+    }
+
+    private void resize() {
+        // TODO: Why setSize get ints, but getWidth/getHeight methods return doubles?
+        // TODO: How to make window adapt to size of its components?
+        timerField.setPreferredSize(new Dimension(20, 20));
+        window.setSize(new Dimension(field.getWidth(), (int) (field.getHeight() + timerField.getPreferredSize().getHeight())));
+    }
+
     private void newGameWithSettings() {
-        window.setSize(defaultSettings.getHeight() * GUIFieldCell.CELL_SIZE, defaultSettings.getWidth() * GUIFieldCell.CELL_SIZE);
-        controller.newGame(defaultSettings);
+        controller.newGameWithSettings(defaultSettings);
+        resize();
+        timerField.setText("");
     }
 
     private void lost() {
         JOptionPane.showInternalMessageDialog(null,
                 "I am sorry, but you just exploded!", "You lost...", JOptionPane.INFORMATION_MESSAGE);
+        controller.endGame();
         newGameWithSettings();
     }
 
     private void won() {
         JOptionPane.showInternalMessageDialog(null, "You won!",
                 "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+        controller.endGame();
         newGameWithSettings();
     }
 
-
     private void showScores() {
-        JOptionPane.showInternalMessageDialog(null, "Todo...",
-                "Scores", JOptionPane.INFORMATION_MESSAGE);
+        var lastEntries = model.getScoresManager().getEntries();
+        var header = new Vector<>(Arrays.asList("Difficulty", "Time"));
+        var data = new Vector<Vector<String>>();
+        for (var entry : lastEntries) {
+            var row = new Vector<>(Arrays.asList(entry.getSettingsName(), entry.getDurationString()));
+            data.add(row);
+        }
+
+        var table = new JTable(data, header);
+        table.setEnabled(false);
+        table.getTableHeader().setReorderingAllowed(false);
+
+        var dialog = new JFrame("Scores");
+        dialog.setSize(500, 500);
+        dialog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        dialog.setResizable(false);
+
+        dialog.setContentPane(new JScrollPane(table));
+
+        dialog.setVisible(true);
     }
+
     private void about() {
         JOptionPane.showInternalMessageDialog(null, "Minesweeper v0.1\nMade by Ivan Baksheev <zpix-dev@list.ru>",
                 "About", JOptionPane.INFORMATION_MESSAGE);

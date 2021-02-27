@@ -1,6 +1,8 @@
 package ru.nsu.fit.ibaksheev.minesweeper.model;
 
-public class FieldCellState {
+import java.io.Serializable;
+
+public class FieldCellState implements Serializable {
     public enum Type {
         Empty,
         Unknown,

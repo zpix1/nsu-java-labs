@@ -3,10 +3,24 @@ package ru.nsu.fit.ibaksheev.minesweeper.model;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-public class Model<P> {
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class Model<P> implements Serializable {
     private P property;
 
-    private final Multimap<String, ModelSubscriber<P>> subscribers = HashMultimap.create();
+    private transient Multimap<String, ModelSubscriber<P>> subscribers = HashMultimap.create();
+
+    private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        subscribers = HashMultimap.create();
+        objectInputStream.defaultReadObject();
+    }
+
+    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException, ClassNotFoundException {
+        objectOutputStream.defaultWriteObject();
+    }
 
     public Model(P property) {
         this.property = property;
@@ -17,6 +31,10 @@ public class Model<P> {
             throw new NullPointerException("Attempt to get null property");
         }
         return property;
+    }
+
+    public boolean propertyExist() {
+        return property != null;
     }
 
     protected void setProperty(P property) {

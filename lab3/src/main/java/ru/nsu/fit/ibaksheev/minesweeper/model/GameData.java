@@ -1,60 +1,31 @@
 package ru.nsu.fit.ibaksheev.minesweeper.model;
 
-public class GameData {
+import java.io.Serializable;
+import java.util.Date;
+
+// Is manipulated by GameModel
+public class GameData implements Serializable {
     FieldCellState[][] realField;
     FieldCellState[][] playerField;
 
     boolean firstShotDone = false;
 
-    public static class Settings {
-        private int width;
-        private int height;
-        private int minesCount;
-        private String name;
+    Date startedAt;
 
-        public Settings(int width, int height, int minesCount) {
-            this.width = width;
-            this.height = height;
-            this.minesCount = minesCount;
-        }
+    SettingsManager.Settings settings;
 
-        public String getName() {
-            return name;
-        }
-
-        public int getWidth() {
-            return width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public int getMinesCount() {
-            return minesCount;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-
-        public void setMinesCount(int minesCount) {
-            this.minesCount = minesCount;
-        }
+    public enum State {
+        NOT_STARTED,
+        STARTED,
+        WON,
+        LOST
     }
 
-    Settings settings;
+    State state = State.NOT_STARTED;
 
-    public GameData(Settings settings) {
+    public GameData(SettingsManager.Settings settings) {
         this.settings = settings;
+        startedAt = new Date();
 
         realField = new FieldCellState[settings.getWidth()][settings.getHeight()];
         playerField = new FieldCellState[settings.getWidth()][settings.getHeight()];

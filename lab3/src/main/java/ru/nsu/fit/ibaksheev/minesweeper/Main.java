@@ -8,8 +8,8 @@ import ru.nsu.fit.ibaksheev.minesweeper.view.gui.GameGUIView;
 
 public class Main {
     public static void main(String[] args) {
-        var model = new GameModel();
-        var controller = new GameController(model);
+        var controller = new GameController();
+        var model = controller.getModel();
         View<GameData> view = new GameGUIView(model, controller);
 
         view.start();

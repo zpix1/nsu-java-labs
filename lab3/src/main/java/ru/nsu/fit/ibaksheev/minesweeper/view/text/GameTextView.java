@@ -2,8 +2,8 @@ package ru.nsu.fit.ibaksheev.minesweeper.view.text;
 
 import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
 import ru.nsu.fit.ibaksheev.minesweeper.model.FieldCellState;
-import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
+import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsManager;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
 
@@ -13,6 +13,8 @@ import java.util.Scanner;
 public class GameTextView extends GameView {
     private final PrintStream out = System.out;
     private final Scanner in = new Scanner(System.in);
+
+    SettingsManager settingsManager = new SettingsManager();
 
     private boolean endGame = false;
 
@@ -56,16 +58,14 @@ public class GameTextView extends GameView {
     public void start() {
         out.println("Welcome to MineSweeper!");
 
-        controller.newGame(new GameData.Settings(9, 9, 10));
+        controller.newGameWithSettings(settingsManager.getFirstSettings());
 
         model.subscribe(model -> {
-            // TODO: Is it okay?
             out.println("You lost!");
             endGame = true;
         }, "lost");
 
         model.subscribe(model -> {
-            // TODO: Is it okay?
             out.println("You won! Congratulations!");
             endGame = true;
         }, "won");
@@ -105,14 +105,14 @@ public class GameTextView extends GameView {
                     continue;
                 }
             } else if (line.startsWith("N")) {
-                controller.newGame(new GameData.Settings(9, 9, 10));
+                controller.newGameWithSettings(settingsManager.getFirstSettings());
             } else if (line.startsWith("X")) {
                 break;
             }
 
             if (endGame) {
                 out.println("Thanks for playing a game!");
-                controller.newGame(new GameData.Settings(9, 9, 10));
+                controller.newGameWithSettings(settingsManager.getFirstSettings());
             }
         }
     }

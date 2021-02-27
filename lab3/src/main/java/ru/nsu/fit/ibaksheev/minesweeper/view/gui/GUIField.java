@@ -7,8 +7,21 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 
 public class GUIField extends JPanel {
+    @Override
+    public int getWidth() {
+        return width;
+    }
 
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    private int width;
+    private int height;
     public void setField(FieldCellState[][] field, MouseAdapter fieldCellMouseListener) {
+        this.width = field[0].length * GUIFieldCell.CELL_SIZE;
+        this.height = field.length * GUIFieldCell.CELL_SIZE;
         removeAll();
         setLayout(new GridLayout(field.length, field[0].length));
         for (int i = 0; i < field.length; i++) {

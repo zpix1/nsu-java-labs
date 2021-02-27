@@ -2,22 +2,24 @@ package ru.nsu.fit.ibaksheev.minesweeper.model;
 
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class GameModel extends Model<GameData> {
-    // TODO: does it break SRP?
-    public SettingsManager settingsManager = new SettingsManager("/settings.properties");
 
     private static final int[][] NEIGHBOURS = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
     private int updatedFieldCellX = 0;
-
     private int updatedFieldCellY = 0;
+
+    private final ScoresManager scoresManager;
 
     public GameModel() {
         super(null);
+        scoresManager = new ScoresManager();
     }
 
     public void setGameData(GameData data) {
@@ -41,6 +43,9 @@ public class GameModel extends Model<GameData> {
         checkCoordinatesWithException(x, y);
         var data = getProperty();
         if (!data.firstShotDone) {
+            data.state = GameData.State.STARTED;
+            data.startedAt = new Date();
+
             fillFields(x, y);
             data.playerField[x][y].type = FieldCellState.Type.Empty;
             emptyFieldDFS(x, y);
@@ -49,16 +54,14 @@ public class GameModel extends Model<GameData> {
         } else {
             if (data.realField[x][y].type == FieldCellState.Type.Mine) {
                 data.playerField[x][y].type = FieldCellState.Type.Mine;
-
+                data.state = GameData.State.LOST;
                 showMinesForUser();
-
                 notifySubscribers("wholeFieldUpdate");
                 notifySubscribers("lost");
                 return;
             }
             data.playerField[x][y].type = FieldCellState.Type.Empty;
             int res = emptyFieldDFS(x, y);
-            System.out.println(res);
             if (res != 1) {
                 notifySubscribers("wholeFieldUpdate");
             } else {
@@ -66,6 +69,7 @@ public class GameModel extends Model<GameData> {
             }
         }
         if (isGameComplete()) {
+            data.state = GameData.State.WON;
             notifySubscribers("won");
         }
     }
@@ -185,20 +189,16 @@ public class GameModel extends Model<GameData> {
         return getProperty().playerField;
     }
 
-//    public FieldCellState[][] getRealField() {
-//        return getProperty().realField;
-//    }
-
-    public int getWidth() {
-        return getProperty().settings.getWidth();
+    public Date getStartedAt() {
+        return getProperty().startedAt;
     }
 
-    public int getHeight() {
-        return getProperty().settings.getHeight();
+    public GameData.State getState() {
+        return getProperty().state;
     }
 
-    public int getMineCount() {
-        return getProperty().settings.getMinesCount();
+    public SettingsManager.Settings getSettings() {
+        return getProperty().settings;
     }
 
     public int getUpdatedFieldCellX() {
@@ -207,5 +207,9 @@ public class GameModel extends Model<GameData> {
 
     public int getUpdatedFieldCellY() {
         return updatedFieldCellY;
+    }
+
+    public ScoresManager getScoresManager() {
+        return scoresManager;
     }
 }

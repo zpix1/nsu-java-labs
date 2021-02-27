@@ -3,14 +3,16 @@ package ru.nsu.fit.ibaksheev.minesweeper.model;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 public class SettingsManager {
-    private final SortedMap<String, GameData.Settings> settingsTypes;
+    private final SortedMap<String, Settings> settingsTypes;
 
     // TODO: Tried to use reflexion api here, but it's just evil
+    public SettingsManager() {
+        var filename = "/settings.properties";
 
-    public SettingsManager(String filename) {
         Properties props = new Properties();
         settingsTypes = new TreeMap<>();
         try {
@@ -23,9 +25,8 @@ public class SettingsManager {
             var type = splitProp[0];
             var fieldName = splitProp[1];
             if (settingsTypes.get(type) == null) {
-                settingsTypes.put(type, new GameData.Settings(0, 0, 0));
+                settingsTypes.put(type, new Settings(0, 0, 0));
             }
-            System.out.println(propName);
             switch (fieldName) {
                 case "name":
                     settingsTypes.get(type).setName((String) props.get(propName));
@@ -43,14 +44,63 @@ public class SettingsManager {
         }
     }
 
-    public GameData.Settings getSettingsByName(String name) throws InvalidArgumentException {
+    public Settings getSettingsByName(String name) throws InvalidArgumentException {
         if (!settingsTypes.containsKey(name)) {
             throw new InvalidArgumentException("settings not found by name " + name);
         }
         return settingsTypes.get(name);
     }
 
-    public Set<Map.Entry<String, GameData.Settings>> getSettingsList() {
+    public Set<Map.Entry<String, Settings>> getSettingsList() {
         return settingsTypes.entrySet();
+    }
+
+    public Settings getFirstSettings() {
+        return settingsTypes.get(settingsTypes.firstKey());
+    }
+
+    public static class Settings implements Serializable {
+        private int width;
+        private int height;
+        private int minesCount;
+        private String name;
+
+        private Settings(int width, int height, int minesCount) {
+            this.width = width;
+            this.height = height;
+            this.minesCount = minesCount;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public int getMinesCount() {
+            return minesCount;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public void setMinesCount(int minesCount) {
+            this.minesCount = minesCount;
+        }
     }
 }
