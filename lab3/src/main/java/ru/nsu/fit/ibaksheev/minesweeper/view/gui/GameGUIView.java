@@ -1,7 +1,6 @@
 package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 
 import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
-import ru.nsu.fit.ibaksheev.minesweeper.model.FieldCellState;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
@@ -10,7 +9,6 @@ import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 
 public class GameGUIView extends GameView {
 

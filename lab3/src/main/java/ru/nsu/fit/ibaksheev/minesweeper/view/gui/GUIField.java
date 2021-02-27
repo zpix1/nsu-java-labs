@@ -3,9 +3,7 @@ package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 import ru.nsu.fit.ibaksheev.minesweeper.model.FieldCellState;
 
 import javax.swing.*;
-import javax.swing.event.AncestorListener;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 
 public class GUIField extends JPanel {

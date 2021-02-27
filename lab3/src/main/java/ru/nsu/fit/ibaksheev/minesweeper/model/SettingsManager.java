@@ -1,10 +1,8 @@
 package ru.nsu.fit.ibaksheev.minesweeper.model;
 
-import com.sun.source.tree.Tree;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class SettingsManager {

@@ -1,10 +1,11 @@
 package ru.nsu.fit.ibaksheev.minesweeper.view.text;
 
 import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
-import ru.nsu.fit.ibaksheev.minesweeper.model.*;
+import ru.nsu.fit.ibaksheev.minesweeper.model.FieldCellState;
+import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
+import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
-import ru.nsu.fit.ibaksheev.minesweeper.view.View;
 
 import java.io.PrintStream;
 import java.util.Scanner;

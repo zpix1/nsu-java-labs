@@ -1,9 +1,10 @@
 package ru.nsu.fit.ibaksheev.minesweeper.model;
 
-import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.GameException;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class GameModel extends Model<GameData> {
     // TODO: does it break SRP?
