@@ -1,9 +1,19 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+    }
+}
+
 plugins {
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'java'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+group 'ru.nsu.fit'
+version '0.1'
 
 repositories {
     mavenCentral()
@@ -17,6 +27,19 @@ dependencies {
     compile 'joda-time:joda-time:2.10.10'
 
     implementation("com.google.guava:guava:30.1-jre")
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+
+jar {
+    manifest {
+        attributes "Main-Class": "ru.nsu.fit.ibaksheev.minesweeper.Main"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 test {
