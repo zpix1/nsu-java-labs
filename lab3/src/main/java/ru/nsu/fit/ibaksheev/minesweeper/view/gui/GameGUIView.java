@@ -56,22 +56,15 @@ public class GameGUIView extends GameView {
         about.addActionListener(event -> about());
 
         var newGame = new JMenu("New game");
-        var easy = new JMenuItem("Easy");
-        easy.addActionListener(event -> {
-            defaultSettings = new GameData.Settings(9, 9, 10);
-            newGameWithSettings();
-        });
-        var medium = new JMenuItem("Medium");
-        medium.addActionListener(event -> {
-            defaultSettings = new GameData.Settings(10, 20, 22);
-            newGameWithSettings();
-        });
-        var hard = new JMenuItem("Hard");
-        hard.addActionListener(event -> {
-            defaultSettings = new GameData.Settings(20, 30, 80);
-            newGameWithSettings();
-        });
-        newGame.add(easy); newGame.add(medium); newGame.add(hard);
+        for (var entry : model.settingsManager.getSettingsList()) {
+            var settings = entry.getValue();
+            var settingMenu = new JMenuItem(settings.getName());
+            settingMenu.addActionListener(event -> {
+                defaultSettings = settings;
+                newGameWithSettings();
+            });
+            newGame.add(settingMenu);
+        }
         game.add(newGame);
         game.add(scores);
         game.add(about);

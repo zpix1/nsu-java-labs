@@ -4,7 +4,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 public class Model<P> {
-
     private P property;
 
     private final Multimap<String, ModelSubscriber<P>> subscribers = HashMultimap.create();

@@ -2,6 +2,7 @@ package ru.nsu.fit.ibaksheev.minesweeper.controller;
 
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
+import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsManager;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
 public class GameController {

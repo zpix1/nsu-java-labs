@@ -7,14 +7,19 @@ public class GameData {
     boolean firstShotDone = false;
 
     public static class Settings {
-        private final int width;
-        private final int height;
-        private final int minesCount;
+        private int width;
+        private int height;
+        private int minesCount;
+        private String name;
 
         public Settings(int width, int height, int minesCount) {
             this.width = width;
             this.height = height;
             this.minesCount = minesCount;
+        }
+
+        public String getName() {
+            return name;
         }
 
         public int getWidth() {
@@ -27,6 +32,22 @@ public class GameData {
 
         public int getMinesCount() {
             return minesCount;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public void setMinesCount(int minesCount) {
+            this.minesCount = minesCount;
         }
     }
 

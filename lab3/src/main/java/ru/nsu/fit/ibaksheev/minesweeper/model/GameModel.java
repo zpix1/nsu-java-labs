@@ -3,12 +3,12 @@ package ru.nsu.fit.ibaksheev.minesweeper.model;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.GameException;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class GameModel extends Model<GameData> {
+    // TODO: does it break SRP?
+    public SettingsManager settingsManager = new SettingsManager("/settings.properties");
+
     private static final int[][] NEIGHBOURS = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
     public GameModel() {
