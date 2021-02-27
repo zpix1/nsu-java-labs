@@ -208,6 +208,7 @@ public class GameGUIView extends GameView {
 
 
     private void exit() {
+        dispose();
         System.exit(0);
     }
 }
