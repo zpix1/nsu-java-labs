@@ -66,6 +66,7 @@ public class GUIFieldCell extends JButton {
             setText("F");
         } else if (state.type == FieldCellState.Type.Mine) {
             setText("*");
+            setEnabled(false);
         }
     }
 

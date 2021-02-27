@@ -16,7 +16,6 @@ public class GameGUIView extends GameView {
 
     private JFrame window;
 
-
     GameData.Settings defaultSettings = new GameData.Settings(9, 9, 10);
 
     public GameGUIView(GameModel model, GameController controller) {
@@ -93,12 +92,13 @@ public class GameGUIView extends GameView {
 
         model.subscribe(model -> field.updateField(this.model.getPlayerField()), "wholeFieldUpdate");
 
+        model.subscribe(model -> field.updateFieldCell(this.model.getPlayerField(), this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY()), "fieldCellUpdate");
+
         model.subscribe(model -> {
             System.out.println(this.model.getPlayerField().length);
             field.setField(this.model.getPlayerField(), adapter);
             window.setVisible(true);
         }, "reset");
-
 
         field.setField(model.getPlayerField(), adapter);
 

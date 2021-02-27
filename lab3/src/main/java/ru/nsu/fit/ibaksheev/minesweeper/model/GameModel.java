@@ -11,6 +11,10 @@ public class GameModel extends Model<GameData> {
 
     private static final int[][] NEIGHBOURS = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
+    private int updatedFieldCellX = 0;
+
+    private int updatedFieldCellY = 0;
+
     public GameModel() {
         super(null);
     }
@@ -40,19 +44,40 @@ public class GameModel extends Model<GameData> {
             data.playerField[x][y].type = FieldCellState.Type.Empty;
             emptyFieldDFS(x, y);
             data.firstShotDone = true;
+            notifySubscribers("wholeFieldUpdate");
         } else {
             if (data.realField[x][y].type == FieldCellState.Type.Mine) {
                 data.playerField[x][y].type = FieldCellState.Type.Mine;
+
+                showMinesForUser();
+
                 notifySubscribers("wholeFieldUpdate");
                 notifySubscribers("lost");
                 return;
             }
             data.playerField[x][y].type = FieldCellState.Type.Empty;
-            emptyFieldDFS(x, y);
+            int res = emptyFieldDFS(x, y);
+            System.out.println(res);
+            if (res != 1) {
+                notifySubscribers("wholeFieldUpdate");
+            } else {
+                notifySubscribers("fieldCellUpdate");
+            }
         }
-        notifySubscribers("wholeFieldUpdate");
         if (isGameComplete()) {
             notifySubscribers("won");
+        }
+    }
+
+    private void showMinesForUser() {
+        var data = getProperty();
+
+        for (int i = 0; i < data.settings.getWidth(); i++) {
+            for (int j = 0; j < data.settings.getHeight(); j++) {
+                if (data.realField[i][j].type == FieldCellState.Type.Mine) {
+                    data.playerField[i][j].type = FieldCellState.Type.Mine;
+                }
+            }
         }
     }
 
@@ -100,20 +125,26 @@ public class GameModel extends Model<GameData> {
         }
     }
 
-    private void emptyFieldDFS(int x, int y) {
+    // returns how many field it has updated
+    private int emptyFieldDFS(int x, int y) {
         var data = getProperty();
+        int fieldsUpdated = 0;
         if (data.realField[x][y].type == FieldCellState.Type.Empty) {
+            updatedFieldCellX = x;
+            updatedFieldCellY = y;
+            fieldsUpdated += 1;
             data.playerField[x][y].type = FieldCellState.Type.Empty;
             if (data.playerField[x][y].value == 0) {
                 for (var neighbour : NEIGHBOURS) {
                     int mx = x + neighbour[0];
                     int my = y + neighbour[1];
                     if (checkCoordinates(mx, my) && data.playerField[mx][my].type == FieldCellState.Type.Unknown) {
-                        emptyFieldDFS(mx, my);
+                        fieldsUpdated += emptyFieldDFS(mx, my);
                     }
                 }
             }
         }
+        return fieldsUpdated;
     }
 
     public void flag(int x, int y) throws InvalidArgumentException {
@@ -121,10 +152,16 @@ public class GameModel extends Model<GameData> {
         var data = getProperty();
         if (data.playerField[x][y].type == FieldCellState.Type.Unknown) {
             data.playerField[x][y].type = FieldCellState.Type.Flag;
+
+            updatedFieldCellX = x;
+            updatedFieldCellY = y;
         } else if (data.playerField[x][y].type == FieldCellState.Type.Flag) {
             data.playerField[x][y].type = FieldCellState.Type.Unknown;
+
+            updatedFieldCellX = x;
+            updatedFieldCellY = y;
         }
-        notifySubscribers("wholeFieldUpdate");
+        notifySubscribers("fieldCellUpdate");
     }
 
     private boolean isGameComplete() {
@@ -161,5 +198,13 @@ public class GameModel extends Model<GameData> {
 
     public int getMineCount() {
         return getProperty().settings.getMinesCount();
+    }
+
+    public int getUpdatedFieldCellX() {
+        return updatedFieldCellX;
+    }
+
+    public int getUpdatedFieldCellY() {
+        return updatedFieldCellY;
     }
 }
