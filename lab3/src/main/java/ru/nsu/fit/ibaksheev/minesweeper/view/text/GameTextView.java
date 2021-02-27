@@ -55,7 +55,7 @@ public class GameTextView extends GameView {
     public void start() {
         out.println("Welcome to MineSweeper!");
 
-        controller.newGame(3, 2, 1);
+        controller.newGame(new GameData.Settings(9, 9, 10));
 
         model.subscribe(model -> {
             // TODO: Is it okay?
@@ -104,14 +104,14 @@ public class GameTextView extends GameView {
                     continue;
                 }
             } else if (line.startsWith("N")) {
-                controller.newGame(9, 9, 10);
+                controller.newGame(new GameData.Settings(9, 9, 10));
             } else if (line.startsWith("X")) {
                 break;
             }
 
             if (endGame) {
                 out.println("Thanks for playing a game!");
-                controller.newGame(9, 9, 10);
+                controller.newGame(new GameData.Settings(9, 9, 10));
             }
         }
     }

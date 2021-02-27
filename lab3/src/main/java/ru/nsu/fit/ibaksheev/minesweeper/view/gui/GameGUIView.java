@@ -2,6 +2,7 @@ package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 
 import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
 import ru.nsu.fit.ibaksheev.minesweeper.model.FieldCellState;
+import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
@@ -15,17 +16,8 @@ public class GameGUIView extends GameView {
 
     private JFrame window;
 
-    static class Settings {
-        public int width, height, minesCount;
 
-        public Settings(int width, int height, int minesCount) {
-            this.width = width;
-            this.height = height;
-            this.minesCount = minesCount;
-        }
-    }
-
-    Settings defaultSettings = new Settings(9, 9, 10);
+    GameData.Settings defaultSettings = new GameData.Settings(9, 9, 10);
 
     public GameGUIView(GameModel model, GameController controller) {
         super(model, controller);
@@ -66,23 +58,17 @@ public class GameGUIView extends GameView {
         var newGame = new JMenu("New game");
         var easy = new JMenuItem("Easy");
         easy.addActionListener(event -> {
-            defaultSettings.width = 9;
-            defaultSettings.height = 9;
-            defaultSettings.minesCount = 10;
+            defaultSettings = new GameData.Settings(9, 9, 10);
             newGameWithSettings();
         });
         var medium = new JMenuItem("Medium");
         medium.addActionListener(event -> {
-            defaultSettings.width = 10;
-            defaultSettings.height = 20;
-            defaultSettings.minesCount = 22;
+            defaultSettings = new GameData.Settings(10, 20, 22);
             newGameWithSettings();
         });
         var hard = new JMenuItem("Hard");
         hard.addActionListener(event -> {
-            defaultSettings.width = 20;
-            defaultSettings.height = 30;
-            defaultSettings.minesCount = 80;
+            defaultSettings = new GameData.Settings(20, 30, 80);
             newGameWithSettings();
         });
         newGame.add(easy); newGame.add(medium); newGame.add(hard);
@@ -128,8 +114,8 @@ public class GameGUIView extends GameView {
     }
 
     private void newGameWithSettings() {
-        window.setSize(defaultSettings.height * GUIFieldCell.CELL_SIZE, defaultSettings.width * GUIFieldCell.CELL_SIZE);
-        controller.newGame(defaultSettings.width, defaultSettings.height, defaultSettings.minesCount);
+        window.setSize(defaultSettings.getHeight() * GUIFieldCell.CELL_SIZE, defaultSettings.getWidth() * GUIFieldCell.CELL_SIZE);
+        controller.newGame(defaultSettings);
     }
 
     private void lost() {

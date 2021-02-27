@@ -6,18 +6,40 @@ public class GameData {
 
     boolean firstShotDone = false;
 
-    int width, height, mineCount;
+    public static class Settings {
+        private final int width;
+        private final int height;
+        private final int minesCount;
 
-    public GameData(int width, int height, int mineCount) {
-        this.width = width;
-        this.height = height;
-        this.mineCount = mineCount;
+        public Settings(int width, int height, int minesCount) {
+            this.width = width;
+            this.height = height;
+            this.minesCount = minesCount;
+        }
 
-        realField = new FieldCellState[width][height];
-        playerField = new FieldCellState[width][height];
+        public int getWidth() {
+            return width;
+        }
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+        public int getHeight() {
+            return height;
+        }
+
+        public int getMinesCount() {
+            return minesCount;
+        }
+    }
+
+    Settings settings;
+
+    public GameData(Settings settings) {
+        this.settings = settings;
+
+        realField = new FieldCellState[settings.getWidth()][settings.getHeight()];
+        playerField = new FieldCellState[settings.getWidth()][settings.getHeight()];
+
+        for (int i = 0; i < settings.getWidth(); i++) {
+            for (int j = 0; j < settings.getHeight(); j++) {
                 playerField[i][j] = new FieldCellState(FieldCellState.Type.Unknown, 0);
                 realField[i][j] = new FieldCellState(FieldCellState.Type.Unknown, 0);
             }

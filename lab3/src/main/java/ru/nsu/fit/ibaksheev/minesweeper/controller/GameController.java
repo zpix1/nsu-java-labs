@@ -22,8 +22,8 @@ public class GameController {
         currentModel.flag(x, y);
     }
 
-    public void newGame(int width, int height, int minesCount) {
-        var data = new GameData(width, height, minesCount);
+    public void newGame(GameData.Settings settings) {
+        var data = new GameData(settings);
         currentModel.setGameData(data);
     }
 }

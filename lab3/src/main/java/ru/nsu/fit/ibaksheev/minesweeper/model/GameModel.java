@@ -22,7 +22,7 @@ public class GameModel extends Model<GameData> {
 
     private boolean checkCoordinates(int x, int y) {
         var data = getProperty();
-        return 0 <= x && x < data.width && 0 <= y && y < data.height;
+        return 0 <= x && x < data.settings.getWidth() && 0 <= y && y < data.settings.getHeight();
     }
 
     private void checkCoordinatesWithException(int x, int y) throws InvalidArgumentException {
@@ -60,8 +60,8 @@ public class GameModel extends Model<GameData> {
         var data = getProperty();
 
         // Initial filling
-        for (int i = 0; i < data.width; i++) {
-            for (int j = 0; j < data.height; j++) {
+        for (int i = 0; i < data.settings.getWidth(); i++) {
+            for (int j = 0; j < data.settings.getHeight(); j++) {
                 data.realField[i][j].type = FieldCellState.Type.Empty;
                 data.playerField[i][j].type = FieldCellState.Type.Unknown;
             }
@@ -69,30 +69,30 @@ public class GameModel extends Model<GameData> {
 
         // Create indexes range
         List<Integer> indexes = new ArrayList<>();
-        for (int i = 0; i < data.width * data.height; i++) {
+        for (int i = 0; i < data.settings.getWidth() * data.settings.getHeight(); i++) {
             indexes.add(i);
         }
 
-        indexes.remove((Integer) (y * data.width + x));
+        indexes.remove((Integer) (y * data.settings.getWidth() + x));
         for (var neighbour : NEIGHBOURS) {
             int mx = x + neighbour[0];
             int my = y + neighbour[1];
-            indexes.remove((Integer) (my * data.width + mx));
+            indexes.remove((Integer) (my * data.settings.getWidth() + mx));
         }
 
         // Shuffle and set mines
         Collections.shuffle(indexes);
-        for (int i = 0; i < data.mineCount; i++) {
+        for (int i = 0; i < data.settings.getMinesCount(); i++) {
             int idx = indexes.get(i);
-            data.realField[idx % data.width][idx / data.width].type = FieldCellState.Type.Mine;
+            data.realField[idx % data.settings.getWidth()][idx / data.settings.getWidth()].type = FieldCellState.Type.Mine;
         }
 
         // Calculate digits for player
-        for (int i = 0; i < data.mineCount; i++) {
+        for (int i = 0; i < data.settings.getMinesCount(); i++) {
             int idx = indexes.get(i);
             for (var neighbour : NEIGHBOURS) {
-                int mx = idx % data.width + neighbour[0];
-                int my = idx / data.width + neighbour[1];
+                int mx = idx % data.settings.getWidth() + neighbour[0];
+                int my = idx / data.settings.getWidth() + neighbour[1];
                 if (checkCoordinates(mx, my)) {
                     data.playerField[mx][my].value++;
                 }
@@ -132,8 +132,8 @@ public class GameModel extends Model<GameData> {
 
         boolean won = true;
 
-        for (int i = 0; i < data.width; i++) {
-            for (int j = 0; j < data.height; j++) {
+        for (int i = 0; i < data.settings.getWidth(); i++) {
+            for (int j = 0; j < data.settings.getHeight(); j++) {
                 if (data.realField[i][j].type == FieldCellState.Type.Empty && data.playerField[i][j].type != FieldCellState.Type.Empty) {
                     won = false;
                     break;
@@ -152,14 +152,14 @@ public class GameModel extends Model<GameData> {
 //    }
 
     public int getWidth() {
-        return getProperty().width;
+        return getProperty().settings.getWidth();
     }
 
     public int getHeight() {
-        return getProperty().height;
+        return getProperty().settings.getHeight();
     }
 
     public int getMineCount() {
-        return getProperty().mineCount;
+        return getProperty().settings.getMinesCount();
     }
 }
