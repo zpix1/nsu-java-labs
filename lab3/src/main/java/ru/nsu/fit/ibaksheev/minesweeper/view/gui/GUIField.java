@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 
-public class GUIField extends JPanel {
+public class GUIField extends Container {
     @Override
     public int getWidth() {
         return width;

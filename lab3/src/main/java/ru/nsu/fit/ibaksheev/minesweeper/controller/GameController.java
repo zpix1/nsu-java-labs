@@ -27,7 +27,6 @@ public class GameController {
                     new FileInputStream(saveFilename));
             model = (GameModel) objectInputStream.readObject();
             System.out.println("Loaded model");
-            System.out.println(Arrays.deepToString(model.getPlayerField()));
 
             objectInputStream.close();
         } catch (IOException | ClassNotFoundException e) {

@@ -95,16 +95,16 @@ public class GameGUIView extends GameView {
             }
         });
         window.setResizable(false);
-        window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
+        window.setLayout(new BorderLayout());
 
         var menuBar = new JMenuBar();
         menuBar.add(createGameMenu());
         window.setJMenuBar(menuBar);
 
-        // TODO: How to align it?
         timerField = new JLabel("");
         timerField.setHorizontalAlignment(SwingConstants.CENTER);
-        window.add(timerField);
+        timerField.setVerticalAlignment(SwingConstants.CENTER);
+        window.add(timerField, BorderLayout.NORTH);
 
         // TODO: Where to create timer thread?
         var timerThread = new Thread(() -> {
@@ -121,6 +121,7 @@ public class GameGUIView extends GameView {
                 }
             }
         });
+
         timerThread.start();
 
         field = new GUIField();
