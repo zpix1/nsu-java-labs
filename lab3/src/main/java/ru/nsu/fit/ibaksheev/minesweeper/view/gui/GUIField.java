@@ -2,7 +2,6 @@ package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 
 import ru.nsu.fit.ibaksheev.minesweeper.model.FieldCellState;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 
@@ -39,8 +38,6 @@ public class GUIField extends Container {
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
                 ((GUIFieldCell)getComponent(i * field[0].length + j)).setState(field[i][j]);
-//                var c = (GUIFieldCell)getComponent(i * field.length + j);
-//                System.out.println(c.getFieldX() + " " + c.getFieldY());
             }
         }
     }

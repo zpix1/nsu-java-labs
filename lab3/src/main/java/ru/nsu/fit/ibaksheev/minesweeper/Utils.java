@@ -5,10 +5,8 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
-import java.util.Date;
-
 public class Utils {
-    private static PeriodFormatter minutesAndSeconds = new PeriodFormatterBuilder()
+    private static final PeriodFormatter minutesAndSeconds = new PeriodFormatterBuilder()
             .printZeroAlways()
             .minimumPrintedDigits(2)
             .appendMinutes()

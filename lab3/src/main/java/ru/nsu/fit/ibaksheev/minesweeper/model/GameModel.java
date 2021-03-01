@@ -2,7 +2,6 @@ package ru.nsu.fit.ibaksheev.minesweeper.model;
 
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;

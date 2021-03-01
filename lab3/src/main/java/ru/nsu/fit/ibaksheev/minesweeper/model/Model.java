@@ -62,7 +62,6 @@ public class Model<P> implements Serializable {
             throw new IllegalArgumentException("Repeated subscribe: " + subscriber);
         }
         subscribers.get(event).add(subscriber);
-//        notifySubscriber(subscriber);
     }
 
     public void unsubscribe(ModelSubscriber<P> subscriber, String event) {

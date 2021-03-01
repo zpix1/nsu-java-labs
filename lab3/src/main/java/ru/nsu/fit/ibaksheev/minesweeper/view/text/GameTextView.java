@@ -75,8 +75,6 @@ public class GameTextView extends GameView {
 
 
         while (true) {
-//            out.println("Real field");
-//            printField(model.getRealField());
             out.println("Player field");
             printField(model.getPlayerField());
 

@@ -8,7 +8,6 @@ import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsManager;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Date;
 
 public class GameController {

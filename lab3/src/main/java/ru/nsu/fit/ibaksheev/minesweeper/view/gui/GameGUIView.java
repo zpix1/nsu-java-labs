@@ -11,7 +11,10 @@ import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Vector;

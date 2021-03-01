@@ -2,7 +2,6 @@ package ru.nsu.fit.ibaksheev.minesweeper;
 
 import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
-import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
 import ru.nsu.fit.ibaksheev.minesweeper.view.View;
 import ru.nsu.fit.ibaksheev.minesweeper.view.gui.GameGUIView;
 
