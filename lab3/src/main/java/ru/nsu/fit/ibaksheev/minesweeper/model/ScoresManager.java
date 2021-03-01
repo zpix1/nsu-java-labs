@@ -1,5 +1,6 @@
 package ru.nsu.fit.ibaksheev.minesweeper.model;
 
+import lombok.Getter;
 import org.joda.time.Duration;
 import ru.nsu.fit.ibaksheev.minesweeper.Utils;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScoresManager implements Serializable {
+    @Getter
     private final List<ScoreEntry> entries;
 
     public ScoresManager() {
@@ -16,10 +18,6 @@ public class ScoresManager implements Serializable {
 
     public void addEntry(ScoreEntry entry) {
         entries.add(entry);
-    }
-
-    public List<ScoreEntry> getEntries() {
-        return new ArrayList<>(entries);
     }
 
     public static class ScoreEntry implements Serializable {

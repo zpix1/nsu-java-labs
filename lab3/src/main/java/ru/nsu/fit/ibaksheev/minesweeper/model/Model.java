@@ -2,13 +2,20 @@ package ru.nsu.fit.ibaksheev.minesweeper.model;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+@Setter(AccessLevel.PROTECTED)
+@Getter(AccessLevel.PROTECTED)
 public class Model<P> implements Serializable {
+    @NonNull
     private P property;
 
     private transient Multimap<String, ModelSubscriber<P>> subscribers = HashMultimap.create();
@@ -24,20 +31,6 @@ public class Model<P> implements Serializable {
 
     private void writeObject(ObjectOutputStream objectOutputStream) throws IOException, ClassNotFoundException {
         objectOutputStream.defaultWriteObject();
-    }
-
-    protected P getProperty() {
-        if (property == null) {
-            throw new NullPointerException("Attempt to get null property");
-        }
-        return property;
-    }
-
-    protected void setProperty(P property) {
-        if (property == null) {
-            throw new NullPointerException("Attempt to set null property");
-        }
-        this.property = property;
     }
 
     public boolean propertyExist() {

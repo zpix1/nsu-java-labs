@@ -1,5 +1,6 @@
 package ru.nsu.fit.ibaksheev.minesweeper.model;
 
+import lombok.*;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
 import java.io.IOException;
@@ -59,6 +60,7 @@ public class SettingsManager {
         return settingsTypes.get(settingsTypes.firstKey());
     }
 
+    @Data
     public static class Settings implements Serializable {
         private int width;
         private int height;
@@ -68,38 +70,6 @@ public class SettingsManager {
         private Settings(int width, int height, int minesCount) {
             this.width = width;
             this.height = height;
-            this.minesCount = minesCount;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getWidth() {
-            return width;
-        }
-
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-
-        public int getMinesCount() {
-            return minesCount;
-        }
-
-        public void setMinesCount(int minesCount) {
             this.minesCount = minesCount;
         }
     }

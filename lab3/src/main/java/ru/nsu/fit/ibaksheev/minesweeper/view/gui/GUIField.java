@@ -1,5 +1,6 @@
 package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 
+import lombok.Getter;
 import ru.nsu.fit.ibaksheev.minesweeper.model.FieldCellState;
 
 import java.awt.*;

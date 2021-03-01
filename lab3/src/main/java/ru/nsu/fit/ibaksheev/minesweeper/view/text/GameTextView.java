@@ -14,7 +14,7 @@ public class GameTextView extends GameView {
     private final PrintStream out = System.out;
     private final Scanner in = new Scanner(System.in);
 
-    SettingsManager settingsManager = new SettingsManager();
+    final SettingsManager settingsManager = new SettingsManager();
 
     private boolean endGame = false;
 
@@ -100,16 +100,16 @@ public class GameTextView extends GameView {
     }
 
     private char stateToChar(FieldCellState state) {
-        if (state.type == FieldCellState.Type.Empty) {
-            if (state.value == 0) {
+        if (state.getType() == FieldCellState.Type.Empty) {
+            if (state.getValue() == 0) {
                 return ' ';
             }
-            return Integer.toString(state.value).charAt(0);
+            return Integer.toString(state.getValue()).charAt(0);
         }
-        if (state.type == FieldCellState.Type.Unknown) {
+        if (state.getType() == FieldCellState.Type.Unknown) {
             return '.';
         }
-        if (state.type == FieldCellState.Type.Flag) {
+        if (state.getType() == FieldCellState.Type.Flag) {
             return 'F';
         }
         return '?';

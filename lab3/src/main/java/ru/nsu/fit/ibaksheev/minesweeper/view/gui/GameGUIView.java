@@ -21,9 +21,9 @@ import java.util.Vector;
 
 public class GameGUIView extends GameView {
 
-    SettingsManager settingsManager = new SettingsManager();
+    private final SettingsManager settingsManager = new SettingsManager();
     SettingsManager.Settings defaultSettings = settingsManager.getFirstSettings();
-    MouseAdapter adapter = new MouseAdapter() {
+    private final MouseAdapter adapter = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
             super.mousePressed(e);
@@ -206,7 +206,6 @@ public class GameGUIView extends GameView {
         JOptionPane.showInternalMessageDialog(null, "Minesweeper v0.1\nMade by Ivan Baksheev <zpix-dev@list.ru>",
                 "About", JOptionPane.INFORMATION_MESSAGE);
     }
-
 
     private void exit() {
         dispose();

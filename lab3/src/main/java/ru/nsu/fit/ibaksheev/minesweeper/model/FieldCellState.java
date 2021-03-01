@@ -1,13 +1,17 @@
 package ru.nsu.fit.ibaksheev.minesweeper.model;
 
+import lombok.*;
+
 import java.io.Serializable;
 
+@Data
 public class FieldCellState implements Serializable {
-    public Type type;
-    public int value;
+    private Type type;
+    private int value;
+
     public FieldCellState(Type type, int value) {
-        this.type = type;
-        this.value = value;
+        this.setType(type);
+        this.setValue(value);
     }
 
     public enum Type {

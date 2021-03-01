@@ -1,31 +1,34 @@
 package ru.nsu.fit.ibaksheev.minesweeper.model;
 
+import lombok.*;
+
 import java.io.Serializable;
 import java.util.Date;
 
 // Is manipulated by GameModel
+@Data
 public class GameData implements Serializable {
-    FieldCellState[][] realField;
-    FieldCellState[][] playerField;
+    private FieldCellState[][] realField;
+    private FieldCellState[][] playerField;
 
-    boolean firstShotDone = false;
+    private boolean firstShotDone = false;
 
-    Date startedAt;
+    private Date startedAt;
 
-    SettingsManager.Settings settings;
-    State state = State.NOT_STARTED;
+    private SettingsManager.Settings settings;
+    private State state = State.NOT_STARTED;
 
     public GameData(SettingsManager.Settings settings) {
-        this.settings = settings;
-        startedAt = new Date();
+        this.setSettings(settings);
+        setStartedAt(new Date());
 
-        realField = new FieldCellState[settings.getWidth()][settings.getHeight()];
-        playerField = new FieldCellState[settings.getWidth()][settings.getHeight()];
+        setRealField(new FieldCellState[settings.getWidth()][settings.getHeight()]);
+        setPlayerField(new FieldCellState[settings.getWidth()][settings.getHeight()]);
 
         for (int i = 0; i < settings.getWidth(); i++) {
             for (int j = 0; j < settings.getHeight(); j++) {
-                playerField[i][j] = new FieldCellState(FieldCellState.Type.Unknown, 0);
-                realField[i][j] = new FieldCellState(FieldCellState.Type.Unknown, 0);
+                getPlayerField()[i][j] = new FieldCellState(FieldCellState.Type.Unknown, 0);
+                getRealField()[i][j] = new FieldCellState(FieldCellState.Type.Unknown, 0);
             }
         }
     }

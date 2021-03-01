@@ -1,5 +1,6 @@
 package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 
+import lombok.Getter;
 import ru.nsu.fit.ibaksheev.minesweeper.model.FieldCellState;
 
 import javax.swing.*;
@@ -7,30 +8,31 @@ import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
 
 public class GUIFieldCell extends JButton {
-    public static int CELL_SIZE = 45;
-    public static float FONT_SIZE = 15f;
-    private final int vx;
-    private final int vy;
-    private FieldCellState state;
+    public static final int CELL_SIZE = 45;
+    public static final float FONT_SIZE = 15f;
+    @Getter
+    private final int fieldX;
+    @Getter
+    private final int fieldY;
 
     public GUIFieldCell(int x, int y) {
         setSize(CELL_SIZE, CELL_SIZE);
-        this.vx = x;
-        this.vy = y;
+        this.fieldX = x;
+        this.fieldY = y;
     }
 
     public void setState(FieldCellState state) {
         setFont(getFont().deriveFont(Font.BOLD));
         setFont(getFont().deriveFont(FONT_SIZE));
-        if (state.type == FieldCellState.Type.Unknown) {
+        if (state.getType() == FieldCellState.Type.Unknown) {
             setText("");
-        } else if (state.type == FieldCellState.Type.Empty) {
-            if (state.value == 0) {
+        } else if (state.getType() == FieldCellState.Type.Empty) {
+            if (state.getValue() == 0) {
                 setText(" ");
             } else {
-                setText(String.valueOf(Integer.toString(state.value).charAt(0)));
+                setText(String.valueOf(Integer.toString(state.getValue()).charAt(0)));
                 final Color c;
-                switch (state.value) {
+                switch (state.getValue()) {
                     case 1:
                         c = Color.blue;
                         break;
@@ -52,7 +54,7 @@ public class GUIFieldCell extends JButton {
                         c = Color.red;
                         break;
                     default:
-                        throw new IllegalStateException("Unexpected value: " + state.value);
+                        throw new IllegalStateException("Unexpected value: " + state.getValue());
                 }
                 setUI(new MetalButtonUI() {
                     protected Color getDisabledTextColor() {
@@ -61,19 +63,11 @@ public class GUIFieldCell extends JButton {
                 });
             }
             setEnabled(false);
-        } else if (state.type == FieldCellState.Type.Flag) {
+        } else if (state.getType() == FieldCellState.Type.Flag) {
             setText("F");
-        } else if (state.type == FieldCellState.Type.Mine) {
+        } else if (state.getType() == FieldCellState.Type.Mine) {
             setText("*");
             setEnabled(false);
         }
-    }
-
-    public int getFieldX() {
-        return vx;
-    }
-
-    public int getFieldY() {
-        return vy;
     }
 }

@@ -1,5 +1,6 @@
 package ru.nsu.fit.ibaksheev.minesweeper.model;
 
+import lombok.Getter;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
 import java.util.ArrayList;
@@ -10,8 +11,11 @@ import java.util.List;
 public class GameModel extends Model<GameData> {
     private static final int[][] NEIGHBOURS = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
+    @Getter
     private final ScoresManager scoresManager;
+    @Getter
     private int updatedFieldCellX = 0;
+    @Getter
     private int updatedFieldCellY = 0;
 
     public GameModel() {
@@ -27,25 +31,25 @@ public class GameModel extends Model<GameData> {
     public void shoot(int x, int y) throws InvalidArgumentException {
         checkCoordinatesWithException(x, y);
         var data = getProperty();
-        if (!data.firstShotDone) {
-            data.state = GameData.State.STARTED;
-            data.startedAt = new Date();
+        if (!data.isFirstShotDone()) {
+            data.setState(GameData.State.STARTED);
+            data.setStartedAt(new Date());
 
             fillFields(x, y);
-            data.playerField[x][y].type = FieldCellState.Type.Empty;
+            data.getPlayerField()[x][y].setType(FieldCellState.Type.Empty);
             emptyFieldDFS(x, y);
-            data.firstShotDone = true;
+            data.setFirstShotDone(true);
             notifySubscribers("wholeFieldUpdate");
         } else {
-            if (data.realField[x][y].type == FieldCellState.Type.Mine) {
-                data.playerField[x][y].type = FieldCellState.Type.Mine;
-                data.state = GameData.State.LOST;
+            if (data.getRealField()[x][y].getType() == FieldCellState.Type.Mine) {
+                data.getPlayerField()[x][y].setType(FieldCellState.Type.Mine);
+                data.setState(GameData.State.LOST);
                 showMinesForUser();
                 notifySubscribers("wholeFieldUpdate");
                 notifySubscribers("lost");
                 return;
             }
-            data.playerField[x][y].type = FieldCellState.Type.Empty;
+            data.getPlayerField()[x][y].setType(FieldCellState.Type.Empty);
             int res = emptyFieldDFS(x, y);
             if (res != 1) {
                 notifySubscribers("wholeFieldUpdate");
@@ -54,7 +58,7 @@ public class GameModel extends Model<GameData> {
             }
         }
         if (isGameComplete()) {
-            data.state = GameData.State.WON;
+            data.setState(GameData.State.WON);
             notifySubscribers("won");
         }
     }
@@ -62,10 +66,10 @@ public class GameModel extends Model<GameData> {
     private void showMinesForUser() {
         var data = getProperty();
 
-        for (int i = 0; i < data.settings.getWidth(); i++) {
-            for (int j = 0; j < data.settings.getHeight(); j++) {
-                if (data.realField[i][j].type == FieldCellState.Type.Mine) {
-                    data.playerField[i][j].type = FieldCellState.Type.Mine;
+        for (int i = 0; i < data.getSettings().getWidth(); i++) {
+            for (int j = 0; j < data.getSettings().getHeight(); j++) {
+                if (data.getRealField()[i][j].getType() == FieldCellState.Type.Mine) {
+                    data.getPlayerField()[i][j].setType(FieldCellState.Type.Mine);
                 }
             }
         }
@@ -75,41 +79,41 @@ public class GameModel extends Model<GameData> {
         var data = getProperty();
 
         // Initial filling
-        for (int i = 0; i < data.settings.getWidth(); i++) {
-            for (int j = 0; j < data.settings.getHeight(); j++) {
-                data.realField[i][j].type = FieldCellState.Type.Empty;
-                data.playerField[i][j].type = FieldCellState.Type.Unknown;
+        for (int i = 0; i < data.getSettings().getWidth(); i++) {
+            for (int j = 0; j < data.getSettings().getHeight(); j++) {
+                data.getRealField()[i][j].setType(FieldCellState.Type.Empty);
+                data.getPlayerField()[i][j].setType(FieldCellState.Type.Unknown);
             }
         }
 
         // Create indexes range
         List<Integer> indexes = new ArrayList<>();
-        for (int i = 0; i < data.settings.getWidth() * data.settings.getHeight(); i++) {
+        for (int i = 0; i < data.getSettings().getWidth() * data.getSettings().getHeight(); i++) {
             indexes.add(i);
         }
 
-        indexes.remove((Integer) (y * data.settings.getWidth() + x));
+        indexes.remove((Integer) (y * data.getSettings().getWidth() + x));
         for (var neighbour : NEIGHBOURS) {
             int mx = x + neighbour[0];
             int my = y + neighbour[1];
-            indexes.remove((Integer) (my * data.settings.getWidth() + mx));
+            indexes.remove((Integer) (my * data.getSettings().getWidth() + mx));
         }
 
         // Shuffle and set mines
         Collections.shuffle(indexes);
-        for (int i = 0; i < data.settings.getMinesCount(); i++) {
+        for (int i = 0; i < data.getSettings().getMinesCount(); i++) {
             int idx = indexes.get(i);
-            data.realField[idx % data.settings.getWidth()][idx / data.settings.getWidth()].type = FieldCellState.Type.Mine;
+            data.getRealField()[idx % data.getSettings().getWidth()][idx / data.getSettings().getWidth()].setType(FieldCellState.Type.Mine);
         }
 
         // Calculate digits for player
-        for (int i = 0; i < data.settings.getMinesCount(); i++) {
+        for (int i = 0; i < data.getSettings().getMinesCount(); i++) {
             int idx = indexes.get(i);
             for (var neighbour : NEIGHBOURS) {
-                int mx = idx % data.settings.getWidth() + neighbour[0];
-                int my = idx / data.settings.getWidth() + neighbour[1];
+                int mx = idx % data.getSettings().getWidth() + neighbour[0];
+                int my = idx / data.getSettings().getWidth() + neighbour[1];
                 if (checkCoordinates(mx, my)) {
-                    data.playerField[mx][my].value++;
+                    data.getPlayerField()[mx][my].setValue(data.getPlayerField()[mx][my].getValue() + 1);
                 }
             }
         }
@@ -119,16 +123,16 @@ public class GameModel extends Model<GameData> {
     private int emptyFieldDFS(int x, int y) {
         var data = getProperty();
         int fieldsUpdated = 0;
-        if (data.realField[x][y].type == FieldCellState.Type.Empty) {
+        if (data.getRealField()[x][y].getType() == FieldCellState.Type.Empty) {
             updatedFieldCellX = x;
             updatedFieldCellY = y;
             fieldsUpdated += 1;
-            data.playerField[x][y].type = FieldCellState.Type.Empty;
-            if (data.playerField[x][y].value == 0) {
+            data.getPlayerField()[x][y].setType(FieldCellState.Type.Empty);
+            if (data.getPlayerField()[x][y].getValue() == 0) {
                 for (var neighbour : NEIGHBOURS) {
                     int mx = x + neighbour[0];
                     int my = y + neighbour[1];
-                    if (checkCoordinates(mx, my) && data.playerField[mx][my].type == FieldCellState.Type.Unknown) {
+                    if (checkCoordinates(mx, my) && data.getPlayerField()[mx][my].getType() == FieldCellState.Type.Unknown) {
                         fieldsUpdated += emptyFieldDFS(mx, my);
                     }
                 }
@@ -140,13 +144,13 @@ public class GameModel extends Model<GameData> {
     public void flag(int x, int y) throws InvalidArgumentException {
         checkCoordinatesWithException(x, y);
         var data = getProperty();
-        if (data.playerField[x][y].type == FieldCellState.Type.Unknown) {
-            data.playerField[x][y].type = FieldCellState.Type.Flag;
+        if (data.getPlayerField()[x][y].getType() == FieldCellState.Type.Unknown) {
+            data.getPlayerField()[x][y].setType(FieldCellState.Type.Flag);
 
             updatedFieldCellX = x;
             updatedFieldCellY = y;
-        } else if (data.playerField[x][y].type == FieldCellState.Type.Flag) {
-            data.playerField[x][y].type = FieldCellState.Type.Unknown;
+        } else if (data.getPlayerField()[x][y].getType() == FieldCellState.Type.Flag) {
+            data.getPlayerField()[x][y].setType(FieldCellState.Type.Unknown);
 
             updatedFieldCellX = x;
             updatedFieldCellY = y;
@@ -163,7 +167,7 @@ public class GameModel extends Model<GameData> {
 
     private boolean checkCoordinates(int x, int y) {
         var data = getProperty();
-        return 0 <= x && x < data.settings.getWidth() && 0 <= y && y < data.settings.getHeight();
+        return 0 <= x && x < data.getSettings().getWidth() && 0 <= y && y < data.getSettings().getHeight();
     }
 
     private boolean isGameComplete() {
@@ -171,9 +175,9 @@ public class GameModel extends Model<GameData> {
 
         boolean won = true;
 
-        for (int i = 0; i < data.settings.getWidth(); i++) {
-            for (int j = 0; j < data.settings.getHeight(); j++) {
-                if (data.realField[i][j].type == FieldCellState.Type.Empty && data.playerField[i][j].type != FieldCellState.Type.Empty) {
+        for (int i = 0; i < data.getSettings().getWidth(); i++) {
+            for (int j = 0; j < data.getSettings().getHeight(); j++) {
+                if (data.getRealField()[i][j].getType() == FieldCellState.Type.Empty && data.getPlayerField()[i][j].getType() != FieldCellState.Type.Empty) {
                     won = false;
                     break;
                 }
@@ -183,30 +187,18 @@ public class GameModel extends Model<GameData> {
     }
 
     public FieldCellState[][] getPlayerField() {
-        return getProperty().playerField;
+        return getProperty().getPlayerField();
     }
 
     public Date getStartedAt() {
-        return getProperty().startedAt;
+        return getProperty().getStartedAt();
     }
 
     public GameData.State getState() {
-        return getProperty().state;
+        return getProperty().getState();
     }
 
     public SettingsManager.Settings getSettings() {
-        return getProperty().settings;
-    }
-
-    public int getUpdatedFieldCellX() {
-        return updatedFieldCellX;
-    }
-
-    public int getUpdatedFieldCellY() {
-        return updatedFieldCellY;
-    }
-
-    public ScoresManager getScoresManager() {
-        return scoresManager;
+        return getProperty().getSettings();
     }
 }
