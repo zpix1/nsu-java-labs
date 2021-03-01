@@ -13,14 +13,6 @@ public class GameData implements Serializable {
     Date startedAt;
 
     SettingsManager.Settings settings;
-
-    public enum State {
-        NOT_STARTED,
-        STARTED,
-        WON,
-        LOST
-    }
-
     State state = State.NOT_STARTED;
 
     public GameData(SettingsManager.Settings settings) {
@@ -36,5 +28,12 @@ public class GameData implements Serializable {
                 realField[i][j] = new FieldCellState(FieldCellState.Type.Unknown, 0);
             }
         }
+    }
+
+    public enum State {
+        NOT_STARTED,
+        STARTED,
+        WON,
+        LOST
     }
 }

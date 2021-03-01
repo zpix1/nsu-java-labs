@@ -8,13 +8,11 @@ import java.util.Date;
 import java.util.List;
 
 public class GameModel extends Model<GameData> {
-
     private static final int[][] NEIGHBOURS = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
+    private final ScoresManager scoresManager;
     private int updatedFieldCellX = 0;
     private int updatedFieldCellY = 0;
-
-    private final ScoresManager scoresManager;
 
     public GameModel() {
         super(null);
@@ -24,18 +22,6 @@ public class GameModel extends Model<GameData> {
     public void setGameData(GameData data) {
         this.setProperty(data);
         notifySubscribers("reset");
-    }
-
-    private boolean checkCoordinates(int x, int y) {
-        var data = getProperty();
-        return 0 <= x && x < data.settings.getWidth() && 0 <= y && y < data.settings.getHeight();
-    }
-
-    private void checkCoordinatesWithException(int x, int y) throws InvalidArgumentException {
-        if (checkCoordinates(x, y)) {
-            return;
-        }
-        throw new InvalidArgumentException("invalid coordinates: " + x + " " + y);
     }
 
     public void shoot(int x, int y) throws InvalidArgumentException {
@@ -166,6 +152,18 @@ public class GameModel extends Model<GameData> {
             updatedFieldCellY = y;
         }
         notifySubscribers("fieldCellUpdate");
+    }
+
+    private void checkCoordinatesWithException(int x, int y) throws InvalidArgumentException {
+        if (checkCoordinates(x, y)) {
+            return;
+        }
+        throw new InvalidArgumentException("invalid coordinates: " + x + " " + y);
+    }
+
+    private boolean checkCoordinates(int x, int y) {
+        var data = getProperty();
+        return 0 <= x && x < data.settings.getWidth() && 0 <= y && y < data.settings.getHeight();
     }
 
     private boolean isGameComplete() {

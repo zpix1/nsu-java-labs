@@ -9,10 +9,9 @@ import java.awt.*;
 public class GUIFieldCell extends JButton {
     public static int CELL_SIZE = 45;
     public static float FONT_SIZE = 15f;
-
-    private FieldCellState state;
     private final int vx;
     private final int vy;
+    private FieldCellState state;
 
     public GUIFieldCell(int x, int y) {
         setSize(CELL_SIZE, CELL_SIZE);

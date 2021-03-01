@@ -13,6 +13,10 @@ public class Model<P> implements Serializable {
 
     private transient Multimap<String, ModelSubscriber<P>> subscribers = HashMultimap.create();
 
+    public Model(P property) {
+        this.property = property;
+    }
+
     private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
         subscribers = HashMultimap.create();
         objectInputStream.defaultReadObject();
@@ -22,10 +26,6 @@ public class Model<P> implements Serializable {
         objectOutputStream.defaultWriteObject();
     }
 
-    public Model(P property) {
-        this.property = property;
-    }
-
     protected P getProperty() {
         if (property == null) {
             throw new NullPointerException("Attempt to get null property");
@@ -33,15 +33,15 @@ public class Model<P> implements Serializable {
         return property;
     }
 
-    public boolean propertyExist() {
-        return property != null;
-    }
-
     protected void setProperty(P property) {
         if (property == null) {
             throw new NullPointerException("Attempt to set null property");
         }
         this.property = property;
+    }
+
+    public boolean propertyExist() {
+        return property != null;
     }
 
     protected void notifySubscribers(String event) {

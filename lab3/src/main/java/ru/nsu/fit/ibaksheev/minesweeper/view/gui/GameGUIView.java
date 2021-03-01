@@ -21,18 +21,8 @@ import java.util.Vector;
 
 public class GameGUIView extends GameView {
 
-    private JFrame window;
-    private JLabel timerField;
-    private GUIField field;
-
     SettingsManager settingsManager = new SettingsManager();
-
     SettingsManager.Settings defaultSettings = settingsManager.getFirstSettings();
-
-    public GameGUIView(GameModel model, GameController controller) {
-        super(model, controller);
-    }
-
     MouseAdapter adapter = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
@@ -53,6 +43,13 @@ public class GameGUIView extends GameView {
             }
         }
     };
+    private JFrame window;
+    private JLabel timerField;
+    private GUIField field;
+
+    public GameGUIView(GameModel model, GameController controller) {
+        super(model, controller);
+    }
 
     private JMenu createGameMenu() {
         var game = new JMenu("Game");

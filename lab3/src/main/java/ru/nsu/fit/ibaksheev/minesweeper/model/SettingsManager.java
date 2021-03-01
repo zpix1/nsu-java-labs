@@ -20,7 +20,7 @@ public class SettingsManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for (var propName: Collections.list(props.keys()).stream().sorted(Comparator.comparing(Object::toString)).toArray()) {
+        for (var propName : Collections.list(props.keys()).stream().sorted(Comparator.comparing(Object::toString)).toArray()) {
             var splitProp = propName.toString().split("\\.");
             var type = splitProp[0];
             var fieldName = splitProp[1];
@@ -75,28 +75,28 @@ public class SettingsManager {
             return name;
         }
 
-        public int getWidth() {
-            return width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public int getMinesCount() {
-            return minesCount;
-        }
-
         public void setName(String name) {
             this.name = name;
+        }
+
+        public int getWidth() {
+            return width;
         }
 
         public void setWidth(int width) {
             this.width = width;
         }
 
+        public int getHeight() {
+            return height;
+        }
+
         public void setHeight(int height) {
             this.height = height;
+        }
+
+        public int getMinesCount() {
+            return minesCount;
         }
 
         public void setMinesCount(int minesCount) {

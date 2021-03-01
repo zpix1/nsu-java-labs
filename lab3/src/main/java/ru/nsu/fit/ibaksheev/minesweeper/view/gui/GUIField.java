@@ -6,6 +6,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 
 public class GUIField extends Container {
+    private int width;
+    private int height;
+
     @Override
     public int getWidth() {
         return width;
@@ -16,8 +19,6 @@ public class GUIField extends Container {
         return height;
     }
 
-    private int width;
-    private int height;
     public void setField(FieldCellState[][] field, MouseAdapter fieldCellMouseListener) {
         this.width = field[0].length * GUIFieldCell.CELL_SIZE;
         this.height = field.length * GUIFieldCell.CELL_SIZE;
@@ -37,12 +38,12 @@ public class GUIField extends Container {
     public void updateField(FieldCellState[][] field) {
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
-                ((GUIFieldCell)getComponent(i * field[0].length + j)).setState(field[i][j]);
+                ((GUIFieldCell) getComponent(i * field[0].length + j)).setState(field[i][j]);
             }
         }
     }
 
     public void updateFieldCell(FieldCellState[][] field, int updatedFieldCellX, int updatedFieldCellY) {
-        ((GUIFieldCell)getComponent(updatedFieldCellX * field[0].length + updatedFieldCellY)).setState(field[updatedFieldCellX][updatedFieldCellY]);
+        ((GUIFieldCell) getComponent(updatedFieldCellX * field[0].length + updatedFieldCellY)).setState(field[updatedFieldCellX][updatedFieldCellY]);
     }
 }

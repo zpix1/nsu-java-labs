@@ -12,11 +12,6 @@ import java.util.Date;
 
 public class GameController {
     private static final String saveFilename = "save.bin";
-
-    public GameModel getModel() {
-        return model;
-    }
-
     GameModel model;
 
     public GameController() {
@@ -33,6 +28,10 @@ public class GameController {
             e.printStackTrace();
             model = new GameModel();
         }
+    }
+
+    public GameModel getModel() {
+        return model;
     }
 
     public void dispose() {

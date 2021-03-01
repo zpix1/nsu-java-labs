@@ -22,38 +22,6 @@ public class GameTextView extends GameView {
         super(model, controller);
     }
 
-    private char stateToChar(FieldCellState state) {
-        if (state.type == FieldCellState.Type.Empty) {
-            if (state.value == 0) {
-                return ' ';
-            }
-            return Integer.toString(state.value).charAt(0);
-        }
-        if (state.type == FieldCellState.Type.Unknown) {
-            return '.';
-        }
-        if (state.type == FieldCellState.Type.Flag) {
-            return 'F';
-        }
-        return '?';
-    }
-
-    private void printField(FieldCellState[][] field) {
-        out.print(' ');
-        for (int i = 0; i < field[0].length; i++) {
-            out.print(i + 1);
-        }
-        out.println();
-        for (int i = 0; i < field.length; i++) {
-            // TODO: formatting (left align)
-            out.print(i + 1);
-            for (int j = 0; j < field[i].length; j++) {
-                out.print(stateToChar(field[i][j]));
-            }
-            out.println();
-        }
-    }
-
     @Override
     public void start() {
         out.println("Welcome to MineSweeper!");
@@ -113,5 +81,37 @@ public class GameTextView extends GameView {
                 controller.newGameWithSettings(settingsManager.getFirstSettings());
             }
         }
+    }
+
+    private void printField(FieldCellState[][] field) {
+        out.print(' ');
+        for (int i = 0; i < field[0].length; i++) {
+            out.print(i + 1);
+        }
+        out.println();
+        for (int i = 0; i < field.length; i++) {
+            // TODO: formatting (left align)
+            out.print(i + 1);
+            for (int j = 0; j < field[i].length; j++) {
+                out.print(stateToChar(field[i][j]));
+            }
+            out.println();
+        }
+    }
+
+    private char stateToChar(FieldCellState state) {
+        if (state.type == FieldCellState.Type.Empty) {
+            if (state.value == 0) {
+                return ' ';
+            }
+            return Integer.toString(state.value).charAt(0);
+        }
+        if (state.type == FieldCellState.Type.Unknown) {
+            return '.';
+        }
+        if (state.type == FieldCellState.Type.Flag) {
+            return 'F';
+        }
+        return '?';
     }
 }
