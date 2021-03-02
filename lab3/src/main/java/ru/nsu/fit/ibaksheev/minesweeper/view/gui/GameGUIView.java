@@ -1,5 +1,6 @@
 package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 
+import lombok.Data;
 import org.joda.time.Duration;
 import ru.nsu.fit.ibaksheev.minesweeper.Utils;
 import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
@@ -18,11 +19,12 @@ import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Vector;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class GameGUIView extends GameView {
-
+    private static final int ANIMATION_STEP = 10;
     private final SettingsManager settingsManager = new SettingsManager();
-    SettingsManager.Settings defaultSettings = settingsManager.getFirstSettings();
     private final MouseAdapter adapter = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
@@ -43,6 +45,8 @@ public class GameGUIView extends GameView {
             }
         }
     };
+    private final BlockingQueue<AnimationCell> animationQueue = new LinkedBlockingDeque<>();
+    private SettingsManager.Settings defaultSettings = settingsManager.getFirstSettings();
     private JFrame window;
     private JLabel timerField;
     private GUIField field;
@@ -107,7 +111,7 @@ public class GameGUIView extends GameView {
         window.add(timerField, BorderLayout.NORTH);
 
         // TODO: Where to create timer thread?
-        var timerThread = new Thread(() -> {
+        new Thread(() -> {
             while (true) {
                 if (model.propertyExist() && model.getState() == GameData.State.STARTED) {
 //                    https://stackoverflow.com/questions/1555262/calculating-the-difference-between-two-java-date-instances
@@ -120,9 +124,22 @@ public class GameGUIView extends GameView {
                     e.printStackTrace();
                 }
             }
-        });
+        }).start();
 
-        timerThread.start();
+        new Thread(() -> {
+            while (true) {
+                try {
+                    var elem = animationQueue.take();
+                    field.updateFieldCell(this.model.getPlayerField(), elem.getX(), elem.getY());
+                    Thread.sleep(ANIMATION_STEP);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ArrayIndexOutOfBoundsException ignored) {
+
+                }
+            }
+        }).start();
+
 
         field = new GUIField();
 
@@ -132,9 +149,10 @@ public class GameGUIView extends GameView {
 
         model.subscribe(model -> won(), "won");
 
-        model.subscribe(model -> field.updateField(this.model.getPlayerField()), "wholeFieldUpdate");
+//        model.subscribe(model -> field.updateField(this.model.getPlayerField()), "wholeFieldUpdate");
 
-        model.subscribe(model -> field.updateFieldCell(this.model.getPlayerField(), this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY()), "fieldCellUpdate");
+//        model.subscribe(model -> field.updateFieldCell(this.model.getPlayerField(), this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY()), "fieldCellUpdate");
+        model.subscribe(model -> animationQueue.add(new AnimationCell(this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY())), "fieldCellUpdate");
 
         model.subscribe(model -> {
             field.setField(this.model.getPlayerField(), adapter);
@@ -210,5 +228,10 @@ public class GameGUIView extends GameView {
     private void exit() {
         dispose();
         System.exit(0);
+    }
+
+    @Data
+    private static class AnimationCell {
+        private final int x, y;
     }
 }
