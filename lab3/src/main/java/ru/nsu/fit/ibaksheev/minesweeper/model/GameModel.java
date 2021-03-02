@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class GameModel extends Model<GameData> {
+public final class GameModel extends Model<GameData> {
     private static final int[][] NEIGHBOURS = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
     @Getter
@@ -39,28 +39,27 @@ public class GameModel extends Model<GameData> {
             data.getPlayerField()[x][y].setType(FieldCellState.Type.Empty);
             emptyFieldDFS(x, y);
             data.setFirstShotDone(true);
-            notifySubscribers("wholeFieldUpdate");
         } else {
             if (data.getRealField()[x][y].getType() == FieldCellState.Type.Mine) {
                 data.getPlayerField()[x][y].setType(FieldCellState.Type.Mine);
                 data.setState(GameData.State.LOST);
                 showMinesForUser();
-                notifySubscribers("wholeFieldUpdate");
                 notifySubscribers("lost");
                 return;
             }
             data.getPlayerField()[x][y].setType(FieldCellState.Type.Empty);
-            int res = emptyFieldDFS(x, y);
-            if (res != 1) {
-                notifySubscribers("wholeFieldUpdate");
-            } else {
-                notifySubscribers("fieldCellUpdate");
-            }
+            emptyFieldDFS(x, y);
         }
         if (isGameComplete()) {
             data.setState(GameData.State.WON);
             notifySubscribers("won");
         }
+    }
+
+    private void updateCell(int x, int y) {
+        updatedFieldCellX = x;
+        updatedFieldCellY = y;
+        notifySubscribers("fieldCellUpdate");
     }
 
     private void showMinesForUser() {
@@ -70,6 +69,7 @@ public class GameModel extends Model<GameData> {
             for (int j = 0; j < data.getSettings().getHeight(); j++) {
                 if (data.getRealField()[i][j].getType() == FieldCellState.Type.Mine) {
                     data.getPlayerField()[i][j].setType(FieldCellState.Type.Mine);
+                    updateCell(i, j);
                 }
             }
         }
@@ -124,10 +124,9 @@ public class GameModel extends Model<GameData> {
         var data = getProperty();
         int fieldsUpdated = 0;
         if (data.getRealField()[x][y].getType() == FieldCellState.Type.Empty) {
-            updatedFieldCellX = x;
-            updatedFieldCellY = y;
             fieldsUpdated += 1;
             data.getPlayerField()[x][y].setType(FieldCellState.Type.Empty);
+            updateCell(x, y);
             if (data.getPlayerField()[x][y].getValue() == 0) {
                 for (var neighbour : NEIGHBOURS) {
                     int mx = x + neighbour[0];
