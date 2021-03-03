@@ -40,6 +40,9 @@ public final class GameModel extends Model<GameData> {
             emptyFieldDFS(x, y);
             data.setFirstShotDone(true);
         } else {
+            if (data.getPlayerField()[x][y].getType() == FieldCellState.Type.Flag) {
+                return;
+            }
             if (data.getRealField()[x][y].getType() == FieldCellState.Type.Mine) {
                 data.getPlayerField()[x][y].setType(FieldCellState.Type.Mine);
                 data.setState(GameData.State.LOST);
