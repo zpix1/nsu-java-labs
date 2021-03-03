@@ -31,6 +31,9 @@ public final class GameModel extends Model<GameData> {
     public void shoot(int x, int y) throws InvalidArgumentException {
         checkCoordinatesWithException(x, y);
         var data = getProperty();
+        if (data.getPlayerField()[x][y].getType() == FieldCellState.Type.Flag) {
+            return;
+        }
         if (!data.isFirstShotDone()) {
             data.setState(GameData.State.STARTED);
             data.setStartedAt(new Date());
