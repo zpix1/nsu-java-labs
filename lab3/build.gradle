@@ -37,6 +37,9 @@ dependencies {
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 
+sourceCompatibility = 11
+targetCompatibility = 11
+
 jar {
     manifest {
         attributes "Main-Class": "ru.nsu.fit.ibaksheev.minesweeper.Main"

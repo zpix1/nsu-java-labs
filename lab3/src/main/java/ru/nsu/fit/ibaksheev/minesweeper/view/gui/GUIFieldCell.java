@@ -65,9 +65,12 @@ public class GUIFieldCell extends JButton {
             }
             setEnabled(false);
         } else if (state.getType() == FieldCellState.Type.Flag) {
-            setText("F");
+            var icon = new ImageIcon(GUIFieldCell.class.getResource("/images/flag.png"));
+            setIcon(icon);
+//            setText("F");
         } else if (state.getType() == FieldCellState.Type.Mine) {
-            setText("*");
+            var icon = new ImageIcon(GUIFieldCell.class.getResource("/images/mine.png"));
+            setIcon(icon);
             setEnabled(false);
         }
     }
