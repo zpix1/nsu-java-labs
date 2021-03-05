@@ -10,6 +10,8 @@ import java.awt.*;
 public class GUIFieldCell extends JButton {
     public static final int CELL_SIZE = 45;
     public static final float FONT_SIZE = 15f;
+    private static final ImageIcon FLAG_ICON = new ImageIcon(GUIFieldCell.class.getResource("/images/flag.png"));
+    private static final ImageIcon MINE_ICON = new ImageIcon(GUIFieldCell.class.getResource("/images/mine.png"));
     @Getter
     private final int fieldX;
     @Getter
@@ -26,8 +28,10 @@ public class GUIFieldCell extends JButton {
         setFont(getFont().deriveFont(Font.BOLD));
         setFont(getFont().deriveFont(FONT_SIZE));
         if (state.getType() == FieldCellState.Type.Unknown) {
+            setIcon(null);
             setText("");
         } else if (state.getType() == FieldCellState.Type.Empty) {
+            setIcon(null);
             if (state.getValue() == 0) {
                 setText(" ");
             } else {
@@ -65,12 +69,11 @@ public class GUIFieldCell extends JButton {
             }
             setEnabled(false);
         } else if (state.getType() == FieldCellState.Type.Flag) {
-            var icon = new ImageIcon(GUIFieldCell.class.getResource("/images/flag.png"));
-            setIcon(icon);
+            setIcon(FLAG_ICON);
 //            setText("F");
         } else if (state.getType() == FieldCellState.Type.Mine) {
-            var icon = new ImageIcon(GUIFieldCell.class.getResource("/images/mine.png"));
-            setIcon(icon);
+            setIcon(MINE_ICON);
+//            setText("*");
             setEnabled(false);
         }
     }
