@@ -89,6 +89,18 @@ public class GameGUIView extends GameView {
     }
 
     public void startGUI() {
+//        try {
+//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (UnsupportedLookAndFeelException e) {
+//            e.printStackTrace();
+//        }
+
         window = new JFrame("Minesweeper");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.addWindowListener(new WindowAdapter() {
@@ -161,8 +173,8 @@ public class GameGUIView extends GameView {
 
         field.setField(model.getPlayerField(), adapter);
 
-        resize();
         window.add(field);
+        resize();
         window.setVisible(true);
     }
 
@@ -172,9 +184,8 @@ public class GameGUIView extends GameView {
 
     private void resize() {
         // TODO: Why setSize get ints, but getWidth/getHeight methods return doubles?
-        // TODO: How to make window adapt to size of its components?
         timerField.setPreferredSize(new Dimension(20, 20));
-        window.setSize(new Dimension(field.getWidth(), (int) (field.getHeight() + timerField.getPreferredSize().getHeight())));
+        window.pack();
     }
 
     private void newGameWithSettings() {

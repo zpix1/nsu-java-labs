@@ -17,6 +17,7 @@ public class GUIFieldCell extends JButton {
 
     public GUIFieldCell(int x, int y) {
         setSize(CELL_SIZE, CELL_SIZE);
+        setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
         this.fieldX = x;
         this.fieldY = y;
     }
