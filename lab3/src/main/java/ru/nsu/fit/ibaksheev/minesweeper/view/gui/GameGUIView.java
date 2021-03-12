@@ -12,10 +12,7 @@ import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Vector;
@@ -89,17 +86,11 @@ public class GameGUIView extends GameView {
     }
 
     public void startGUI() {
-//        try {
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (InstantiationException e) {
-//            e.printStackTrace();
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        } catch (UnsupportedLookAndFeelException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         window = new JFrame("Minesweeper");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -123,32 +114,19 @@ public class GameGUIView extends GameView {
         window.add(timerField, BorderLayout.NORTH);
 
         // TODO: Where to create timer thread?
-        new Thread(() -> {
-            while (true) {
-                if (model.propertyExist() && model.getState() == GameData.State.STARTED) {
+
+        new Timer(1000, e -> {
+            if (model.propertyExist() && model.getState() == GameData.State.STARTED) {
 //                    https://stackoverflow.com/questions/1555262/calculating-the-difference-between-two-java-date-instances
-                    var duration = new Duration(model.getStartedAt().getTime(), new Date().getTime());
-                    timerField.setText(Utils.formatDuration(duration));
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                var duration = new Duration(model.getStartedAt().getTime(), new Date().getTime());
+                timerField.setText(Utils.formatDuration(duration));
             }
         }).start();
 
-        new Thread(() -> {
-            while (true) {
-                try {
-                    var elem = animationQueue.take();
-                    field.updateFieldCell(this.model.getPlayerField(), elem.getX(), elem.getY());
-                    Thread.sleep(ANIMATION_STEP);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ArrayIndexOutOfBoundsException ignored) {
-
-                }
+        new Timer(ANIMATION_STEP, e -> {
+            var elem = animationQueue.poll();
+            if (elem != null) {
+                field.updateFieldCell(this.model.getPlayerField(), elem.getX(), elem.getY());
             }
         }).start();
 
