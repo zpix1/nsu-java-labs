@@ -173,16 +173,16 @@ public class GameGUIView extends GameView {
     }
 
     private void lost() {
+        controller.endGame();
         JOptionPane.showInternalMessageDialog(null,
                 "I am sorry, but you just exploded!", "You lost...", JOptionPane.INFORMATION_MESSAGE);
-        controller.endGame();
         newGameWithSettings();
     }
 
     private void won() {
+        controller.endGame();
         JOptionPane.showInternalMessageDialog(null, "You won!",
                 "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
-        controller.endGame();
         newGameWithSettings();
     }
 
