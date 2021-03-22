@@ -15,14 +15,10 @@ public class GameController {
     GameModel model;
 
     public GameController() {
-        ObjectInputStream objectInputStream;
-        try {
-            objectInputStream = new ObjectInputStream(
-                    new FileInputStream(saveFilename));
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(
+                new FileInputStream(saveFilename))) {
             model = (GameModel) objectInputStream.readObject();
             System.out.println("Loaded model");
-
-            objectInputStream.close();
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error while reading model, creating new one.");
             e.printStackTrace();
@@ -35,12 +31,9 @@ public class GameController {
     }
 
     public void dispose() {
-        ObjectOutputStream objectOutputStream;
-        try {
-            objectOutputStream = new ObjectOutputStream(
-                    new FileOutputStream(saveFilename));
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                new FileOutputStream(saveFilename))) {
             objectOutputStream.writeObject(model);
-            objectOutputStream.close();
         } catch (IOException e) {
             System.err.println("Can't save model, exiting anyway.");
             e.printStackTrace();
