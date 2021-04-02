@@ -33,7 +33,7 @@ public class Model<P> implements Serializable {
         objectOutputStream.defaultWriteObject();
     }
 
-    public boolean propertyExist() {
+    public boolean propertyExists() {
         return property != null;
     }
 

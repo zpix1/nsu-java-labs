@@ -3,9 +3,9 @@ package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 import lombok.Data;
 import org.joda.time.Duration;
 import ru.nsu.fit.ibaksheev.minesweeper.Utils;
-import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
+import ru.nsu.fit.ibaksheev.minesweeper.controller.LocalGameController;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
-import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
+import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsGameModel;
 import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsManager;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
@@ -20,7 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class GameGUIView extends GameView {
-    private static final int ANIMATION_STEP = 10;
+    private static final int ANIMATION_STEP = 0;
     private final SettingsManager settingsManager = new SettingsManager();
     private final MouseAdapter adapter = new MouseAdapter() {
         @Override
@@ -48,7 +48,7 @@ public class GameGUIView extends GameView {
     private JLabel timerField;
     private GUIField field;
 
-    public GameGUIView(GameModel model, GameController controller) {
+    public GameGUIView(SettingsGameModel model, LocalGameController controller) {
         super(model, controller);
     }
 
@@ -116,7 +116,7 @@ public class GameGUIView extends GameView {
         // TODO: Where to create timer thread?
 
         new Timer(1000, e -> {
-            if (model.propertyExist() && model.getState() == GameData.State.STARTED) {
+            if (model.propertyExists() && model.getState() == GameData.State.STARTED) {
 //                    https://stackoverflow.com/questions/1555262/calculating-the-difference-between-two-java-date-instances
                 var duration = new Duration(model.getStartedAt().getTime(), new Date().getTime());
                 timerField.setText(Utils.formatDuration(duration));
@@ -139,9 +139,6 @@ public class GameGUIView extends GameView {
 
         model.subscribe(model -> won(), "won");
 
-//        model.subscribe(model -> field.updateField(this.model.getPlayerField()), "wholeFieldUpdate");
-
-//        model.subscribe(model -> field.updateFieldCell(this.model.getPlayerField(), this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY()), "fieldCellUpdate");
         model.subscribe(model -> animationQueue.add(new AnimationCell(this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY())), "fieldCellUpdate");
 
         model.subscribe(model -> {

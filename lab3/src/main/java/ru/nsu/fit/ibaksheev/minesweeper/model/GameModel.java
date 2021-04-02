@@ -8,11 +8,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public final class GameModel extends Model<GameData> {
+public class GameModel extends Model<GameData> {
     private static final int[][] NEIGHBOURS = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
-    @Getter
-    private final ScoresManager scoresManager;
     @Getter
     private int updatedFieldCellX = 0;
     @Getter
@@ -20,7 +18,6 @@ public final class GameModel extends Model<GameData> {
 
     public GameModel() {
         super(null);
-        scoresManager = new ScoresManager();
     }
 
     public void setGameData(GameData data) {

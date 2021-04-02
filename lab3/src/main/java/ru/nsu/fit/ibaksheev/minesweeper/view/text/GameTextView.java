@@ -1,8 +1,8 @@
 package ru.nsu.fit.ibaksheev.minesweeper.view.text;
 
-import ru.nsu.fit.ibaksheev.minesweeper.controller.GameController;
+import ru.nsu.fit.ibaksheev.minesweeper.controller.LocalGameController;
 import ru.nsu.fit.ibaksheev.minesweeper.model.FieldCellState;
-import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
+import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsGameModel;
 import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsManager;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
@@ -18,7 +18,7 @@ public class GameTextView extends GameView {
 
     private boolean endGame = false;
 
-    public GameTextView(GameModel model, GameController controller) {
+    public GameTextView(SettingsGameModel model, LocalGameController controller) {
         super(model, controller);
     }
 

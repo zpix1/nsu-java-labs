@@ -2,7 +2,7 @@ package ru.nsu.fit.ibaksheev.minesweeper.controller;
 
 import org.joda.time.Duration;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
-import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
+import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsGameModel;
 import ru.nsu.fit.ibaksheev.minesweeper.model.ScoresManager;
 import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsManager;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
@@ -10,27 +10,27 @@ import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentExceptio
 import java.io.*;
 import java.util.Date;
 
-public class GameController {
+public class LocalGameController {
     private static final String saveFilename = "save.bin";
-    GameModel model;
+    SettingsGameModel model;
 
-    public GameController() {
+    public LocalGameController() {
         ObjectInputStream objectInputStream;
         try {
             objectInputStream = new ObjectInputStream(
                     new FileInputStream(saveFilename));
-            model = (GameModel) objectInputStream.readObject();
+            model = (SettingsGameModel) objectInputStream.readObject();
             System.out.println("Loaded model");
 
             objectInputStream.close();
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error while reading model, creating new one.");
             e.printStackTrace();
-            model = new GameModel();
+            model = new SettingsGameModel();
         }
     }
 
-    public GameModel getModel() {
+    public SettingsGameModel getModel() {
         return model;
     }
 
@@ -56,7 +56,7 @@ public class GameController {
     }
 
     public void loadOrStartNew(SettingsManager.Settings settings) {
-        if (!model.propertyExist()) {
+        if (!model.propertyExists()) {
             newGameWithSettings(settings);
         }
     }
