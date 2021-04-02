@@ -1,5 +1,6 @@
 package ru.nsu.fit.ibaksheev.minesweeper.controller;
 
+import lombok.Getter;
 import org.joda.time.Duration;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
 import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsGameModel;
@@ -12,17 +13,15 @@ import java.util.Date;
 
 public class LocalGameController {
     private static final String saveFilename = "save.bin";
+
+    @Getter
     SettingsGameModel model;
 
     public LocalGameController() {
-        ObjectInputStream objectInputStream;
-        try {
-            objectInputStream = new ObjectInputStream(
-                    new FileInputStream(saveFilename));
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(
+                new FileInputStream(saveFilename))) {
             model = (SettingsGameModel) objectInputStream.readObject();
             System.out.println("Loaded model");
-
-            objectInputStream.close();
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error while reading model, creating new one.");
             e.printStackTrace();
@@ -30,17 +29,10 @@ public class LocalGameController {
         }
     }
 
-    public SettingsGameModel getModel() {
-        return model;
-    }
-
     public void dispose() {
-        ObjectOutputStream objectOutputStream;
-        try {
-            objectOutputStream = new ObjectOutputStream(
-                    new FileOutputStream(saveFilename));
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                new FileOutputStream(saveFilename))) {
             objectOutputStream.writeObject(model);
-            objectOutputStream.close();
         } catch (IOException e) {
             System.err.println("Can't save model, exiting anyway.");
             e.printStackTrace();
