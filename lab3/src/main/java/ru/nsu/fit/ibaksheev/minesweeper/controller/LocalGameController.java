@@ -11,7 +11,7 @@ import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentExceptio
 import java.io.*;
 import java.util.Date;
 
-public class LocalGameController {
+public class LocalGameController implements GameController {
     private static final String saveFilename = "save.bin";
 
     @Getter

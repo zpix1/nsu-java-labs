@@ -199,8 +199,4 @@ public class GameModel extends Model<GameData> {
     public GameData.State getState() {
         return getProperty().getState();
     }
-
-    public SettingsManager.Settings getSettings() {
-        return getProperty().getSettings();
-    }
 }

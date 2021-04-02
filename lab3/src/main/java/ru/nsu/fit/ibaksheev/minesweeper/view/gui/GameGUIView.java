@@ -19,7 +19,7 @@ import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class GameGUIView extends GameView {
+public class GameGUIView implements GameView {
     private static final int ANIMATION_STEP = 0;
     private final SettingsManager settingsManager = new SettingsManager();
     private final MouseAdapter adapter = new MouseAdapter() {
@@ -43,13 +43,16 @@ public class GameGUIView extends GameView {
         }
     };
     private final BlockingQueue<AnimationCell> animationQueue = new LinkedBlockingDeque<>();
+    private final LocalGameController controller;
+    private final SettingsGameModel model;
     private SettingsManager.Settings defaultSettings = settingsManager.getFirstSettings();
     private JFrame window;
     private JLabel timerField;
     private GUIField field;
 
-    public GameGUIView(SettingsGameModel model, LocalGameController controller) {
-        super(model, controller);
+    public GameGUIView(LocalGameController controller) {
+        this.controller = controller;
+        this.model = controller.getModel();
     }
 
     private JMenu createGameMenu() {

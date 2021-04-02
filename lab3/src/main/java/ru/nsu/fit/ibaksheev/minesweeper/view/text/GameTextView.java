@@ -10,16 +10,20 @@ import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-public class GameTextView extends GameView {
+public class GameTextView implements GameView {
     private final PrintStream out = System.out;
     private final Scanner in = new Scanner(System.in);
 
     final SettingsManager settingsManager = new SettingsManager();
+    private final SettingsGameModel model;
 
     private boolean endGame = false;
 
-    public GameTextView(SettingsGameModel model, LocalGameController controller) {
-        super(model, controller);
+    private final LocalGameController controller;
+
+    public GameTextView(LocalGameController controller) {
+        this.controller = controller;
+        this.model = controller.getModel();
     }
 
     @Override
