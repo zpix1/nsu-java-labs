@@ -67,7 +67,7 @@ public class SettingsManager {
         private int minesCount;
         private String name;
 
-        private Settings(int width, int height, int minesCount) {
+        public Settings(int width, int height, int minesCount) {
             this.width = width;
             this.height = height;
             this.minesCount = minesCount;

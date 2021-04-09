@@ -9,13 +9,13 @@ import ru.nsu.fit.ibaksheev.minesweeper.view.gui.OnlineGameGUIView;
 
 public class Main {
     public static void main(String[] args) {
-        var controller = new LocalGameController();
-        var model = controller.getModel();
-        View<GameData> view = new GameGUIView(controller);
-
-        view.start();
-//        var controller = new OnlineGameController();
-//        View<GameData> view = new OnlineGameGUIView(controller);
+//        var controller = new LocalGameController();
+//        View<GameData> view = new GameGUIView(controller);
+//
 //        view.start();
+
+        var controller = new OnlineGameController();
+        View<GameData> view = new OnlineGameGUIView(controller);
+        view.start();
     }
 }

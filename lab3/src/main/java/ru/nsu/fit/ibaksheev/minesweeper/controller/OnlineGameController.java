@@ -11,7 +11,10 @@ public class OnlineGameController implements GameController {
     GameModel model;
 
     public OnlineGameController() {
-
+        syncModel = new GameModel();
+        syncModel.setGameData(new GameData(new SettingsManager.Settings(10, 10, 10)));
+        model = new GameModel();
+        model.setGameData(new GameData(new SettingsManager.Settings(10, 10, 10)));
     }
 
     @Override
