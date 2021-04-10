@@ -16,6 +16,7 @@ import java.io.Serializable;
 @Getter(AccessLevel.PROTECTED)
 public class Model<P> implements Serializable {
     @NonNull
+    @Getter
     private P property;
 
     private transient Multimap<String, ModelSubscriber<P>> subscribers = HashMultimap.create();

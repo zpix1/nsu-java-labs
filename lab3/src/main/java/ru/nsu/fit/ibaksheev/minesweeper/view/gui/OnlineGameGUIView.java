@@ -5,9 +5,7 @@ import org.joda.time.Duration;
 import ru.nsu.fit.ibaksheev.minesweeper.Utils;
 import ru.nsu.fit.ibaksheev.minesweeper.controller.LocalGameController;
 import ru.nsu.fit.ibaksheev.minesweeper.controller.OnlineGameController;
-import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
-import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
-import ru.nsu.fit.ibaksheev.minesweeper.model.SettingsGameModel;
+import ru.nsu.fit.ibaksheev.minesweeper.model.*;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
 import ru.nsu.fit.ibaksheev.minesweeper.view.View;
@@ -24,8 +22,9 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class OnlineGameGUIView implements GameView {
     private final GameModel syncModel;
-    private final OnlineGameController controller;
     private final GameModel model;
+    private final Model<OnlineGameController.NetworkState> networkModel;
+    private final OnlineGameController controller;
 
 
     private static final int ANIMATION_STEP = 0;
@@ -58,15 +57,56 @@ public class OnlineGameGUIView implements GameView {
 
     private final MouseAdapter syncAdapter = new MouseAdapter() {};
 
-    void won() {
+    private void won() {
         System.out.println("won!");
     }
 
-    void lost() {
+    private void lost() {
         System.out.println("lost!");
     }
 
-    public void startGUI() {
+    private void afterDisconnection(){
+        window.removeAll();
+
+        var loadingLabel = new JLabel("Disconnected...");
+        window.add(loadingLabel, BorderLayout.CENTER);
+
+        window.pack();
+    }
+
+    private void afterConnection() {
+        window.removeAll();
+
+        new Timer(ANIMATION_STEP, e -> {
+            var elem = animationQueue.poll();
+            if (elem != null) {
+                field.updateFieldCell(this.model.getPlayerField(), elem.getX(), elem.getY());
+            }
+        }).start();
+
+        var fieldPanel = new Panel(new BorderLayout());
+        fieldPanel.add(new JLabel("Your field", SwingConstants.CENTER), BorderLayout.NORTH);
+        field = new GUIField();
+        model.subscribe(model -> lost(), "lost");
+        model.subscribe(model -> won(), "won");
+        model.subscribe(model -> animationQueue.add(new OnlineGameGUIView.AnimationCell(this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY())), "fieldCellUpdate");
+        field.setField(model.getPlayerField(), adapter);
+        fieldPanel.add(field, BorderLayout.SOUTH);
+
+        window.add(fieldPanel, BorderLayout.WEST);
+
+        var syncFieldPanel = new Panel(new BorderLayout());
+        syncFieldPanel.add(new JLabel("Opponent field", SwingConstants.CENTER), BorderLayout.NORTH);
+        syncField = new GUIField();
+        syncField.setField(syncModel.getPlayerField(), syncAdapter);
+        syncFieldPanel.add(syncField, BorderLayout.SOUTH);
+
+        window.add(syncFieldPanel, BorderLayout.EAST);
+
+        window.pack();
+    }
+
+    public void init() {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
@@ -79,36 +119,10 @@ public class OnlineGameGUIView implements GameView {
         window.setResizable(false);
         window.setLayout(new BorderLayout(5, 5));
 
-        new Timer(ANIMATION_STEP, e -> {
-            var elem = animationQueue.poll();
-            if (elem != null) {
-                field.updateFieldCell(this.model.getPlayerField(), elem.getX(), elem.getY());
-            }
-        }).start();
-
-        var fieldPanel = new Panel(new BorderLayout());
-        fieldPanel.add(new JLabel("Your field", SwingConstants.CENTER), BorderLayout.NORTH);
-
-        field = new GUIField();
-        model.subscribe(model -> lost(), "lost");
-        model.subscribe(model -> won(), "won");
-        model.subscribe(model -> animationQueue.add(new OnlineGameGUIView.AnimationCell(this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY())), "fieldCellUpdate");
-        field.setField(model.getPlayerField(), adapter);
-        fieldPanel.add(field, BorderLayout.SOUTH);
-
-        window.add(fieldPanel, BorderLayout.WEST);
-
-        var syncFieldPanel = new Panel(new BorderLayout());
-        syncFieldPanel.add(new JLabel("Opponent field", SwingConstants.CENTER), BorderLayout.NORTH);
-
-        syncField = new GUIField();
-        syncField.setField(syncModel.getPlayerField(), syncAdapter);
-        syncFieldPanel.add(syncField, BorderLayout.SOUTH);
-
-        window.add(syncFieldPanel, BorderLayout.EAST);
+        var loadingLabel = new JLabel("Connecting...");
+        window.add(loadingLabel, BorderLayout.CENTER);
 
         window.pack();
-
         window.setVisible(true);
     }
 
@@ -116,11 +130,22 @@ public class OnlineGameGUIView implements GameView {
         this.controller = controller;
         model = controller.getModel();
         syncModel = controller.getSyncModel();
+        networkModel = controller.getNetworkModel();
     }
 
     @Override
     public void start() {
-        SwingUtilities.invokeLater(this::startGUI);
+        SwingUtilities.invokeLater(this::init);
+        networkModel.subscribe(model -> {
+            var newState = networkModel.getProperty();
+            switch (newState) {
+                case CONNECTED:
+                    SwingUtilities.invokeLater(this::afterConnection);
+                    break;
+                case DISCONNECTED:
+                    break;
+            }
+        }, "update");
     }
 
     @Data
