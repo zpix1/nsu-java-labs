@@ -31,6 +31,7 @@ public class OnlineGameGUIView implements GameView {
     private JFrame window;
     private GUIField field;
     private GUIField syncField;
+    private JLabel label;
 
     private final BlockingQueue<OnlineGameGUIView.AnimationCell> animationQueue = new LinkedBlockingDeque<>();
 
@@ -75,7 +76,7 @@ public class OnlineGameGUIView implements GameView {
     }
 
     private void afterConnection() {
-        window.removeAll();
+        window.setVisible(false);
 
         new Timer(ANIMATION_STEP, e -> {
             var elem = animationQueue.poll();
@@ -91,19 +92,22 @@ public class OnlineGameGUIView implements GameView {
         model.subscribe(model -> won(), "won");
         model.subscribe(model -> animationQueue.add(new OnlineGameGUIView.AnimationCell(this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY())), "fieldCellUpdate");
         field.setField(model.getPlayerField(), adapter);
-        fieldPanel.add(field, BorderLayout.SOUTH);
-
-        window.add(fieldPanel, BorderLayout.WEST);
 
         var syncFieldPanel = new Panel(new BorderLayout());
         syncFieldPanel.add(new JLabel("Opponent field", SwingConstants.CENTER), BorderLayout.NORTH);
         syncField = new GUIField();
         syncField.setField(syncModel.getPlayerField(), syncAdapter);
-        syncFieldPanel.add(syncField, BorderLayout.SOUTH);
+        window.remove(label);
 
+        syncFieldPanel.add(syncField, BorderLayout.SOUTH);
+        fieldPanel.add(field, BorderLayout.SOUTH);
         window.add(syncFieldPanel, BorderLayout.EAST);
+        window.add(fieldPanel, BorderLayout.WEST);
+
 
         window.pack();
+
+        window.setVisible(true);
     }
 
     public void init() {
@@ -119,11 +123,11 @@ public class OnlineGameGUIView implements GameView {
         window.setResizable(false);
         window.setLayout(new BorderLayout(5, 5));
 
-        var loadingLabel = new JLabel("Connecting...");
-        window.add(loadingLabel, BorderLayout.CENTER);
-
+        label = new JLabel("Connecting...");
+        window.add(label, BorderLayout.CENTER);
         window.pack();
         window.setVisible(true);
+        window.createBufferStrategy(2);
     }
 
     public OnlineGameGUIView(OnlineGameController controller) {
@@ -137,15 +141,18 @@ public class OnlineGameGUIView implements GameView {
     public void start() {
         SwingUtilities.invokeLater(this::init);
         networkModel.subscribe(model -> {
+            System.out.println("updateProp");
             var newState = networkModel.getProperty();
             switch (newState) {
                 case CONNECTED:
+                    System.out.println("CONNECTED");
                     SwingUtilities.invokeLater(this::afterConnection);
                     break;
                 case DISCONNECTED:
                     break;
             }
         }, "update");
+        controller.connect();
     }
 
     @Data

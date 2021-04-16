@@ -19,6 +19,13 @@ public class Model<P> implements Serializable {
     @Getter
     private P property;
 
+    public void setProperty(P newProperty) {
+        if (newProperty != property) {
+            property = newProperty;
+            notifySubscribers("update");
+        }
+    }
+
     private transient Multimap<String, ModelSubscriber<P>> subscribers = HashMultimap.create();
 
     public Model(P property) {

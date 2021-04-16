@@ -76,6 +76,7 @@ public class GameModel extends Model<GameData> {
                 }
             }
         }
+        notifySubscribers("fieldUpdate");
     }
 
     private void fillFields(int x, int y) {
@@ -124,6 +125,14 @@ public class GameModel extends Model<GameData> {
 
     // returns how many field it has updated
     private int emptyFieldDFS(int x, int y) {
+        int value = _emptyFieldDFS(x, y);
+
+        notifySubscribers("fieldUpdate");
+
+        return value;
+    }
+
+    private int _emptyFieldDFS(int x, int y) {
         var data = getProperty();
         int fieldsUpdated = 0;
         if (data.getRealField()[x][y].getType() == FieldCellState.Type.Empty) {
@@ -135,7 +144,7 @@ public class GameModel extends Model<GameData> {
                     int mx = x + neighbour[0];
                     int my = y + neighbour[1];
                     if (checkCoordinates(mx, my) && data.getPlayerField()[mx][my].getType() == FieldCellState.Type.Unknown) {
-                        fieldsUpdated += emptyFieldDFS(mx, my);
+                        fieldsUpdated += _emptyFieldDFS(mx, my);
                     }
                 }
             }
@@ -158,6 +167,7 @@ public class GameModel extends Model<GameData> {
             updatedFieldCellY = y;
         }
         notifySubscribers("fieldCellUpdate");
+        notifySubscribers("fieldUpdate");
     }
 
     private void checkCoordinatesWithException(int x, int y) throws InvalidArgumentException {
