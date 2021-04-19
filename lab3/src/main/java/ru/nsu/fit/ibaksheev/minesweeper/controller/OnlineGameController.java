@@ -8,8 +8,10 @@ import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentExceptio
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class OnlineGameController implements GameController {
     @Getter
@@ -31,7 +33,7 @@ public class OnlineGameController implements GameController {
     private Socket socket;
     private PrintWriter socketOut;
     private BufferedReader socketIn;
-    private BlockingQueue<Message> messageQueue;
+    private BlockingQueue<Message> messageQueue = new LinkedBlockingDeque<>();
 
     @Data
     @AllArgsConstructor
@@ -79,10 +81,6 @@ public class OnlineGameController implements GameController {
             socketOut = new PrintWriter(socket.getOutputStream(), true);
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             // wait until connected
-            var response = socketIn.readLine();
-            if (!response.equals("CONNECTED")) {
-                throw new IOException("connection invalid: " + response);
-            }
             new Thread(() -> {
                 var gson = new Gson();
                 while (true) {
@@ -99,6 +97,8 @@ public class OnlineGameController implements GameController {
                             case "field":
                                 syncModel.setGameData(message.getGameData());
                                 break;
+                            case "connected":
+                                networkModel.setProperty(NetworkState.CONNECTED);
                         }
                     } catch (IOException | InvalidArgumentException e) {
                         networkModel.setProperty(NetworkState.ERROR);
@@ -125,10 +125,6 @@ public class OnlineGameController implements GameController {
         } catch (IOException e) {
             e.printStackTrace();
             networkModel.setProperty(NetworkState.ERROR);
-            return;
         }
-
-        System.out.println("connected");
-        networkModel.setProperty(NetworkState.CONNECTED);
     }
 }
