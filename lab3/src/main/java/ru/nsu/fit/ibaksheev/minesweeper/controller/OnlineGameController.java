@@ -146,12 +146,14 @@ public class OnlineGameController implements GameController {
     }
 
     public void endGame() {
-        if (networkModel.getProperty() == NetworkState.CONNECTED)
-        if (model.getState() == GameData.State.WON) {
-            messageQueue.add(new Message("won", 0, 0, null));
-        } else if (model.getState() == GameData.State.LOST) {
-            messageQueue.add(new Message("lost", 0, 0, null));
+        if (networkModel.getProperty() == NetworkState.CONNECTED) {
+            if (model.getState() == GameData.State.WON) {
+                messageQueue.add(new Message("won", 0, 0, null));
+            } else if (model.getState() == GameData.State.LOST) {
+                messageQueue.add(new Message("lost", 0, 0, null));
+            }
         }
         messageQueue.add(new Message("disconnect", 0, 0, null));
+        System.exit(0);
     }
 }

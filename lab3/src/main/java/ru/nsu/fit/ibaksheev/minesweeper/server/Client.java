@@ -23,6 +23,10 @@ public class Client {
     private BlockingQueue<OnlineGameController.Message> queue = new LinkedBlockingDeque<>();
     private Gson gson = new Gson();
 
+    private Thread listenThread;
+    private Thread sendThread;
+
+
     public Client(Socket socket) throws IOException {
         this.socket = socket;
         socketOut = new PrintWriter(socket.getOutputStream(), true);
@@ -30,21 +34,34 @@ public class Client {
         send();
     }
 
+    public void dispose() {
+        sendMessage(new OnlineGameController.Message("disconnect", 0, 0, null));
+
+        listenThread.stop();
+        sendThread.stop();
+    }
+
     public void listen(ClientListenCallback callback) {
-        new Thread(() -> {
+        listenThread = new Thread(() -> {
             while (true) {
                 try {
                     var message = readMessage();
+                    if (message.getEvent().equals("disconnect")) {
+                        // Deprecated but who cares?
+                        dispose();
+                        return;
+                    }
                     callback.callback(message);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
+        listenThread.start();
     }
 
     private void send() {
-        new Thread(() -> {
+        sendThread = new Thread(() -> {
             while (true) {
                 try {
                     var message = queue.take();
@@ -53,7 +70,8 @@ public class Client {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
+        sendThread.start();
     }
 
     private OnlineGameController.Message readMessage() throws IOException {
