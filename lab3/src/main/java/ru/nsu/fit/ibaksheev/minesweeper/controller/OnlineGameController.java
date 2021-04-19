@@ -115,7 +115,7 @@ public class OnlineGameController implements GameController {
             readThread.start();
             var sendThread = new Thread(() -> {
                 var gson = new Gson();
-                while (alive()) {
+                while (true) {
                     Message message = null;
                     try {
                         message = messageQueue.take();
@@ -126,7 +126,6 @@ public class OnlineGameController implements GameController {
                         socketOut.println(gson.toJson(message));
                     }
                 }
-                System.out.println("stopped");
             });
             sendThread.setDaemon(true);
             sendThread.start();
@@ -144,6 +143,7 @@ public class OnlineGameController implements GameController {
                 messageQueue.add(new Message("lost", 0, 0, null));
             }
         }
+        System.out.println("disconnect added to queue");
         messageQueue.add(new Message("disconnect", 0, 0, null));
         networkModel.setProperty(NetworkState.DISCONNECTED);
     }

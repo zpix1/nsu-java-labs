@@ -88,9 +88,9 @@ public class OnlineGameGUIView implements GameView {
                     break;
                 case DISCONNECTED:
                     endGame();
+                    SwingUtilities.invokeLater(this::errorConnection);
                     break;
                 case ERROR:
-                    System.out.println("ERROR");
                     controller.endGame();
                     SwingUtilities.invokeLater(this::errorConnection);
                     break;
@@ -106,8 +106,15 @@ public class OnlineGameGUIView implements GameView {
             e.printStackTrace();
         }
 
-        window = new JFrame("Minesweeper Online");
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window = new JFrame("Minesweeper Online") {
+            @Override
+            public void dispose() {
+                endGame();
+                super.dispose();
+                System.exit(0);
+            }
+        };
+        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         window.setResizable(false);
         window.setLayout(new BorderLayout(5, 5));
