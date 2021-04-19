@@ -2,23 +2,15 @@ package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.joda.time.Duration;
-import ru.nsu.fit.ibaksheev.minesweeper.Utils;
-import ru.nsu.fit.ibaksheev.minesweeper.controller.LocalGameController;
 import ru.nsu.fit.ibaksheev.minesweeper.controller.OnlineGameController;
 import ru.nsu.fit.ibaksheev.minesweeper.model.*;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
-import ru.nsu.fit.ibaksheev.minesweeper.view.View;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.lang.reflect.Field;
-import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -60,12 +52,43 @@ public class OnlineGameGUIView implements GameView {
 
     private final MouseAdapter syncAdapter = new MouseAdapter() {};
 
+    private void endGame() {
+        window.setVisible(false);
+        window.dispose();
+        controller.endGame();
+    }
+
     private void won() {
-        System.out.println("won!");
+        JOptionPane.showInternalMessageDialog(null, "You won!",
+                "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+        endGame();
     }
 
     private void lost() {
-        System.out.println("lost!");
+        JOptionPane.showInternalMessageDialog(null, "You lost!",
+                "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+        endGame();
+    }
+
+    private void opponentWon() {
+        JOptionPane.showInternalMessageDialog(null, "You lost! (your opponent won)",
+                "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+        endGame();
+    }
+
+    private void opponentLost() {
+        JOptionPane.showInternalMessageDialog(null, "You won! (your opponent lost)",
+                "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+        endGame();
+    }
+
+    public void waitConnection() {
+        label.setText("waiting for player...");
+    }
+    public void errorConnection() {
+        JOptionPane.showInternalMessageDialog(null, "Error!",
+                "Error!", JOptionPane.INFORMATION_MESSAGE);
+        endGame();
     }
 
     private void afterDisconnection(){
@@ -120,13 +143,6 @@ public class OnlineGameGUIView implements GameView {
         window.setVisible(true);
     }
 
-    public void waitConnection() {
-        label.setText("waiting for player...");
-    }
-    public void errorConnection() {
-        label.setText("error... please restart application");
-    }
-
     public void init() {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -165,11 +181,20 @@ public class OnlineGameGUIView implements GameView {
                     System.out.println("CONNECTED");
                     SwingUtilities.invokeLater(this::afterConnection);
                     break;
-                case WAITING_FOR_PLAYER:
+                case WAITING_FOR_OPPONENT:
                     SwingUtilities.invokeLater(this::waitConnection);
                     break;
+                case OPPONENT_LOST:
+                    SwingUtilities.invokeLater(this::opponentLost);
+                    break;
+                case OPPONENT_WON:
+                    SwingUtilities.invokeLater(this::opponentWon);
+                    break;
                 case DISCONNECTED:
+                    endGame();
+                    break;
                 case ERROR:
+                    System.out.println("disc");
                     SwingUtilities.invokeLater(this::errorConnection);
                     break;
             }

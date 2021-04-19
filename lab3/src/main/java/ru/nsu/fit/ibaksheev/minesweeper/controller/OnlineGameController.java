@@ -2,14 +2,13 @@ package ru.nsu.fit.ibaksheev.minesweeper.controller;
 
 import com.google.gson.Gson;
 import lombok.*;
+import org.joda.time.Duration;
 import ru.nsu.fit.ibaksheev.minesweeper.model.*;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingDeque;
+import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -21,7 +20,9 @@ public class OnlineGameController implements GameController {
 
     public enum NetworkState {
         CONNECTION,
-        WAITING_FOR_PLAYER,
+        OPPONENT_WON,
+        OPPONENT_LOST,
+        WAITING_FOR_OPPONENT,
         CONNECTED,
         DISCONNECTED,
         ERROR
@@ -84,14 +85,23 @@ public class OnlineGameController implements GameController {
                         var message = gson.fromJson(messageJson, Message.class);
                         System.out.println(message);
                         switch (message.event) {
+                            case "disconnect":
+                                networkModel.setProperty(NetworkState.DISCONNECTED);
+                                break;
                             case "wait":
-                                networkModel.setProperty(NetworkState.WAITING_FOR_PLAYER);
+                                networkModel.setProperty(NetworkState.WAITING_FOR_OPPONENT);
                                 break;
                             case "flag":
                                 syncModel.flag(message.getX(), message.getY());
                                 break;
                             case "shoot":
                                 syncModel.shoot(message.getX(), message.getY());
+                                break;
+                            case "won":
+                                networkModel.setProperty(NetworkState.OPPONENT_WON);
+                                break;
+                            case "lost":
+                                networkModel.setProperty(NetworkState.OPPONENT_LOST);
                                 break;
                             case "yourField":
                                 model.setGameData(message.getGameData());
@@ -133,5 +143,15 @@ public class OnlineGameController implements GameController {
             e.printStackTrace();
             networkModel.setProperty(NetworkState.ERROR);
         }
+    }
+
+    public void endGame() {
+        if (networkModel.getProperty() == NetworkState.CONNECTED)
+        if (model.getState() == GameData.State.WON) {
+            messageQueue.add(new Message("won", 0, 0, null));
+        } else if (model.getState() == GameData.State.LOST) {
+            messageQueue.add(new Message("lost", 0, 0, null));
+        }
+        messageQueue.add(new Message("disconnect", 0, 0, null));
     }
 }
