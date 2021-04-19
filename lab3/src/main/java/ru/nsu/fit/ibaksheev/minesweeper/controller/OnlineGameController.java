@@ -143,8 +143,7 @@ public class OnlineGameController implements GameController {
                 messageQueue.add(new Message("lost", 0, 0, null));
             }
         }
-        System.out.println("disconnect added to queue");
-        messageQueue.add(new Message("disconnect", 0, 0, null));
+        socketOut.println((new Gson()).toJson(new Message("disconnect", 0, 0, null)));
         networkModel.setProperty(NetworkState.DISCONNECTED);
     }
 

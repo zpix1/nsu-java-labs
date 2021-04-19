@@ -45,12 +45,12 @@ public class Client {
             while (true) {
                 try {
                     var message = readMessage();
+                    callback.callback(message);
                     if (message.getEvent().equals("disconnect")) {
                         // Deprecated but who cares?
                         dispose();
                         return;
                     }
-                    callback.callback(message);
                 } catch (IOException e) {
                     e.printStackTrace();
                     break;
