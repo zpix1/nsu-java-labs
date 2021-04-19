@@ -74,27 +74,25 @@ public class OnlineGameGUIView implements GameView {
             var newState = networkModel.getProperty();
             switch (newState) {
                 case CONNECTED:
-                    System.out.println("CONNECTED");
                     SwingUtilities.invokeLater(this::afterConnection);
                     break;
                 case WAITING_FOR_OPPONENT:
                     SwingUtilities.invokeLater(this::waitConnection);
                     break;
                 case OPPONENT_LOST:
-                    SwingUtilities.invokeLater(this::opponentLost);
                     endGame();
+                    SwingUtilities.invokeLater(this::opponentLost);
                     break;
                 case OPPONENT_WON:
-                    SwingUtilities.invokeLater(this::opponentWon);
                     endGame();
+                    SwingUtilities.invokeLater(this::opponentWon);
                     break;
                 case DISCONNECTED:
                     endGame();
                     break;
                 case ERROR:
-                    System.out.println("disc");
-                    SwingUtilities.invokeLater(this::errorConnection);
                     endGame();
+                    SwingUtilities.invokeLater(this::errorConnection);
                     break;
             }
         }, "update");
