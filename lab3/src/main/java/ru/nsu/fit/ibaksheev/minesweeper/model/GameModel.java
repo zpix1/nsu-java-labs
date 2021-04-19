@@ -25,6 +25,11 @@ public class GameModel extends Model<GameData> {
         notifySubscribers("reset");
     }
 
+    public void pregenerate() {
+        fillFields(0, 0);
+        getProperty().setFirstShotDone(true);
+    }
+
     public void shoot(int x, int y) throws InvalidArgumentException {
         checkCoordinatesWithException(x, y);
         var data = getProperty();
@@ -123,7 +128,7 @@ public class GameModel extends Model<GameData> {
         }
     }
 
-    // returns how many field it has updated
+    // Returns how many field it has updated
     private int emptyFieldDFS(int x, int y) {
         int value = _emptyFieldDFS(x, y);
 
@@ -157,11 +162,14 @@ public class GameModel extends Model<GameData> {
         var data = getProperty();
         if (data.getPlayerField()[x][y].getType() == FieldCellState.Type.Unknown) {
             data.getPlayerField()[x][y].setType(FieldCellState.Type.Flag);
+            System.out.println("set to flag");
 
             updatedFieldCellX = x;
             updatedFieldCellY = y;
         } else if (data.getPlayerField()[x][y].getType() == FieldCellState.Type.Flag) {
             data.getPlayerField()[x][y].setType(FieldCellState.Type.Unknown);
+            System.out.println("set to unknown");
+
 
             updatedFieldCellX = x;
             updatedFieldCellY = y;

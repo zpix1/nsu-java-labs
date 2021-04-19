@@ -1,5 +1,6 @@
 package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.joda.time.Duration;
 import ru.nsu.fit.ibaksheev.minesweeper.Utils;
@@ -16,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -81,7 +83,7 @@ public class OnlineGameGUIView implements GameView {
         new Timer(ANIMATION_STEP, e -> {
             var elem = animationQueue.poll();
             if (elem != null) {
-                field.updateFieldCell(this.model.getPlayerField(), elem.getX(), elem.getY());
+                elem.getField().updateFieldCell(elem.getModel().getPlayerField(), elem.getX(), elem.getY());
             }
         }).start();
 
@@ -90,7 +92,15 @@ public class OnlineGameGUIView implements GameView {
         field = new GUIField();
         model.subscribe(model -> lost(), "lost");
         model.subscribe(model -> won(), "won");
-        model.subscribe(model -> animationQueue.add(new OnlineGameGUIView.AnimationCell(this.model.getUpdatedFieldCellX(), this.model.getUpdatedFieldCellY())), "fieldCellUpdate");
+
+        model.subscribe(temp -> {
+            animationQueue.add(new AnimationCell(field, model, model.getUpdatedFieldCellX(), model.getUpdatedFieldCellY()));
+        }, "fieldCellUpdate");
+
+        syncModel.subscribe(temp -> {
+            animationQueue.add(new AnimationCell(syncField, syncModel, syncModel.getUpdatedFieldCellX(), syncModel.getUpdatedFieldCellY()));
+        }, "fieldCellUpdate");
+
         field.setField(model.getPlayerField(), adapter);
 
         var syncFieldPanel = new Panel(new BorderLayout());
@@ -108,6 +118,13 @@ public class OnlineGameGUIView implements GameView {
         window.pack();
 
         window.setVisible(true);
+    }
+
+    public void waitConnection() {
+        label.setText("waiting for player...");
+    }
+    public void errorConnection() {
+        label.setText("error... please restart application");
     }
 
     public void init() {
@@ -148,7 +165,12 @@ public class OnlineGameGUIView implements GameView {
                     System.out.println("CONNECTED");
                     SwingUtilities.invokeLater(this::afterConnection);
                     break;
+                case WAITING_FOR_PLAYER:
+                    SwingUtilities.invokeLater(this::waitConnection);
+                    break;
                 case DISCONNECTED:
+                case ERROR:
+                    SwingUtilities.invokeLater(this::errorConnection);
                     break;
             }
         }, "update");
@@ -156,7 +178,10 @@ public class OnlineGameGUIView implements GameView {
     }
 
     @Data
+    @AllArgsConstructor
     private static class AnimationCell {
+        private GUIField field;
+        private GameModel model;
         private final int x, y;
     }
 }

@@ -45,17 +45,12 @@ public class OnlineGameController implements GameController {
 
     public OnlineGameController() {
         syncModel = new GameModel();
-        syncModel.setGameData(new GameData(new SettingsManager.Settings(10, 10, 10)));
+//        syncModel.setGameData(new GameData(new SettingsManager.Settings(10, 10, 10)));
 
         model = new GameModel();
-        model.setGameData(new GameData(new SettingsManager.Settings(10, 10, 10)));
+//        model.setGameData(new GameData(new SettingsManager.Settings(10, 10, 10)));
 
-        model.subscribe(new ModelSubscriber<GameData>() {
-            @Override
-            public void modelChanged(Model<GameData> model) {
-                System.out.println("transfer it to network");
-            }
-        }, "fieldUpdate");
+//        model.subscribe(model -> System.out.println("transfer it to network"), "fieldUpdate");
 
         networkModel = new Model<>(NetworkState.CONNECTION);
     }
@@ -87,18 +82,30 @@ public class OnlineGameController implements GameController {
                     try {
                         var messageJson = socketIn.readLine();
                         var message = gson.fromJson(messageJson, Message.class);
+                        System.out.println(message);
                         switch (message.event) {
+                            case "wait":
+                                networkModel.setProperty(NetworkState.WAITING_FOR_PLAYER);
+                                break;
                             case "flag":
                                 syncModel.flag(message.getX(), message.getY());
                                 break;
                             case "shoot":
                                 syncModel.shoot(message.getX(), message.getY());
                                 break;
-                            case "field":
-                                syncModel.setGameData(message.getGameData());
+                            case "yourField":
+                                model.setGameData(message.getGameData());
+
+                                if (syncModel.propertyExists()) {
+                                    networkModel.setProperty(NetworkState.CONNECTED);
+                                }
                                 break;
-                            case "connected":
-                                networkModel.setProperty(NetworkState.CONNECTED);
+                            case "opponentField":
+                                syncModel.setGameData(message.getGameData());
+                                if (model.propertyExists()) {
+                                    networkModel.setProperty(NetworkState.CONNECTED);
+                                }
+                                break;
                         }
                     } catch (IOException | InvalidArgumentException e) {
                         networkModel.setProperty(NetworkState.ERROR);
@@ -121,7 +128,7 @@ public class OnlineGameController implements GameController {
                 }
             }).start();
 
-            messageQueue.add(new Message("field", 0, 0, model.getProperty()));
+//            messageQueue.add(new Message("field", 0, 0, model.getProperty()));
         } catch (IOException e) {
             e.printStackTrace();
             networkModel.setProperty(NetworkState.ERROR);

@@ -7,7 +7,7 @@ import java.util.Date;
 
 // Is manipulated by GameModel
 @Data
-public class GameData implements Serializable {
+public class GameData implements Serializable, Cloneable {
     private FieldCellState[][] realField;
     private FieldCellState[][] playerField;
 
