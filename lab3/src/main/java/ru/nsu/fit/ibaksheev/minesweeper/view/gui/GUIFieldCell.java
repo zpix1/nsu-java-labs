@@ -6,12 +6,13 @@ import ru.nsu.fit.ibaksheev.minesweeper.model.FieldCellState;
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
+import java.util.Objects;
 
 public class GUIFieldCell extends JButton {
     public static final int CELL_SIZE = 45;
     public static final float FONT_SIZE = 15f;
-    private static final ImageIcon FLAG_ICON = new ImageIcon(GUIFieldCell.class.getResource("/images/flag.png"));
-    private static final ImageIcon MINE_ICON = new ImageIcon(GUIFieldCell.class.getResource("/images/mine.png"));
+    private static final ImageIcon FLAG_ICON = new ImageIcon(Objects.requireNonNull(Objects.requireNonNull(GUIFieldCell.class.getResource("/images/flag.png"))));
+    private static final ImageIcon MINE_ICON = new ImageIcon(Objects.requireNonNull(Objects.requireNonNull(GUIFieldCell.class.getResource("/images/mine.png"))));
     @Getter
     private final int fieldX;
     @Getter

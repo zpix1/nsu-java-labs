@@ -2,21 +2,19 @@ package ru.nsu.fit.ibaksheev.minesweeper.controller;
 
 import com.google.gson.Gson;
 import lombok.*;
-import org.joda.time.Duration;
 import ru.nsu.fit.ibaksheev.minesweeper.model.*;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class OnlineGameController implements GameController {
     @Getter
-    private GameModel syncModel;
+    private final GameModel syncModel;
     @Getter
-    private GameModel model;
+    private final GameModel model;
 
     public enum NetworkState {
         CONNECTION,
@@ -29,12 +27,15 @@ public class OnlineGameController implements GameController {
     }
 
     @Getter
-    private Model<NetworkState> networkModel;
+    private final Model<NetworkState> networkModel;
 
     private Socket socket;
     private PrintWriter socketOut;
     private BufferedReader socketIn;
-    private BlockingQueue<Message> messageQueue = new LinkedBlockingDeque<>();
+    private final BlockingQueue<Message> messageQueue = new LinkedBlockingDeque<>();
+
+    final String addr;
+    final int port;
 
     @Data
     @AllArgsConstructor
@@ -44,14 +45,13 @@ public class OnlineGameController implements GameController {
         private GameData gameData;
     }
 
-    public OnlineGameController() {
+    public OnlineGameController(String addr, int port) {
+        this.addr = addr;
+        this.port = port;
         syncModel = new GameModel();
 //        syncModel.setGameData(new GameData(new SettingsManager.Settings(10, 10, 10)));
 
         model = new GameModel();
-//        model.setGameData(new GameData(new SettingsManager.Settings(10, 10, 10)));
-
-//        model.subscribe(model -> System.out.println("transfer it to network"), "fieldUpdate");
 
         networkModel = new Model<>(NetworkState.CONNECTION);
     }
@@ -72,8 +72,7 @@ public class OnlineGameController implements GameController {
         System.out.println("connecting...");
 
         try {
-            // TODO: Add to props
-            socket = new Socket("localhost", 5000);
+            socket = new Socket(addr, port);
             socketOut = new PrintWriter(socket.getOutputStream(), true);
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             // wait until connected

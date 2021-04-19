@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 public class Server {
-    public static void main() throws IOException {
-        var socket = new ServerSocket(5000, 2);
+    public static void main(int port) throws IOException {
+        var socket = new ServerSocket(port, 6);
         while (true) {
             var firstClient = new Client(socket.accept());
             firstClient.sendMessage(new OnlineGameController.Message("wait", 0,0,null));

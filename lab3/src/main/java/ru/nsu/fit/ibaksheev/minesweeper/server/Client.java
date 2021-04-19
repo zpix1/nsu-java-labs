@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -17,11 +16,11 @@ public class Client {
         void callback(OnlineGameController.Message message);
     }
 
-    private Socket socket;
-    private PrintWriter socketOut;
-    private BufferedReader socketIn;
-    private BlockingQueue<OnlineGameController.Message> queue = new LinkedBlockingDeque<>();
-    private Gson gson = new Gson();
+    private final Socket socket;
+    private final PrintWriter socketOut;
+    private final BufferedReader socketIn;
+    private final BlockingQueue<OnlineGameController.Message> queue = new LinkedBlockingDeque<>();
+    private final Gson gson = new Gson();
 
     private Thread listenThread;
     private Thread sendThread;

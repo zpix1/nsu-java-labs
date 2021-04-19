@@ -66,13 +66,13 @@ public class OnlineGameGUIView implements GameView {
 
     private void lost() {
         JOptionPane.showInternalMessageDialog(null, "You lost!",
-                "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+                "Bad!", JOptionPane.INFORMATION_MESSAGE);
         endGame();
     }
 
     private void opponentWon() {
         JOptionPane.showInternalMessageDialog(null, "You lost! (your opponent won)",
-                "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+                "Bad!", JOptionPane.INFORMATION_MESSAGE);
         endGame();
     }
 
@@ -116,13 +116,9 @@ public class OnlineGameGUIView implements GameView {
         model.subscribe(model -> lost(), "lost");
         model.subscribe(model -> won(), "won");
 
-        model.subscribe(temp -> {
-            animationQueue.add(new AnimationCell(field, model, model.getUpdatedFieldCellX(), model.getUpdatedFieldCellY()));
-        }, "fieldCellUpdate");
+        model.subscribe(temp -> animationQueue.add(new AnimationCell(field, model, model.getUpdatedFieldCellX(), model.getUpdatedFieldCellY())), "fieldCellUpdate");
 
-        syncModel.subscribe(temp -> {
-            animationQueue.add(new AnimationCell(syncField, syncModel, syncModel.getUpdatedFieldCellX(), syncModel.getUpdatedFieldCellY()));
-        }, "fieldCellUpdate");
+        syncModel.subscribe(temp -> animationQueue.add(new AnimationCell(syncField, syncModel, syncModel.getUpdatedFieldCellX(), syncModel.getUpdatedFieldCellY())), "fieldCellUpdate");
 
         field.setField(model.getPlayerField(), adapter);
 
