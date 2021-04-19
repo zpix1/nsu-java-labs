@@ -20,10 +20,12 @@ public class Main {
 
         if (addr.equals("server")) {
             System.out.println("Server mode...");
-            try {
-                Server.main(port);
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (int i = 0; i < 100; i++) {
+                try {
+                    Server.main(port);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             System.out.println("Console mode...");

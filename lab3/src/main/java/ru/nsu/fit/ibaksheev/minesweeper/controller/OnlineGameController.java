@@ -145,6 +145,7 @@ public class OnlineGameController implements GameController {
             }
         }
         messageQueue.add(new Message("disconnect", 0, 0, null));
+        networkModel.setProperty(NetworkState.DISCONNECTED);
     }
 
     public enum NetworkState {

@@ -43,8 +43,7 @@ public class OnlineGameGUIView implements GameView {
             }
         }
     };
-    private final MouseAdapter syncAdapter = new MouseAdapter() {
-    };
+    private final MouseAdapter syncAdapter = new MouseAdapter() {};
     private JFrame window;
     private GUIField field;
     private GUIField syncField;
@@ -91,7 +90,8 @@ public class OnlineGameGUIView implements GameView {
                     endGame();
                     break;
                 case ERROR:
-                    endGame();
+                    System.out.println("ERROR");
+                    controller.endGame();
                     SwingUtilities.invokeLater(this::errorConnection);
                     break;
             }
@@ -163,12 +163,14 @@ public class OnlineGameGUIView implements GameView {
     }
 
     private void opponentLost() {
+        endGame();
         JOptionPane.showInternalMessageDialog(null, "You won! (your opponent lost)",
                 "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
         System.exit(0);
     }
 
     private void opponentWon() {
+        endGame();
         JOptionPane.showInternalMessageDialog(null, "You lost! (your opponent won)",
                 "Bad!", JOptionPane.INFORMATION_MESSAGE);
         System.exit(0);
@@ -180,19 +182,21 @@ public class OnlineGameGUIView implements GameView {
     }
 
     public void errorConnection() {
+        endGame();
         JOptionPane.showInternalMessageDialog(null, "Error!",
                 "Error!", JOptionPane.INFORMATION_MESSAGE);
         System.exit(0);
-
     }
 
     private void lost() {
+        endGame();
         JOptionPane.showInternalMessageDialog(null, "You lost!",
                 "Bad!", JOptionPane.INFORMATION_MESSAGE);
         System.exit(0);
     }
 
     private void won() {
+        endGame();
         JOptionPane.showInternalMessageDialog(null, "You won!",
                 "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
         System.exit(0);
