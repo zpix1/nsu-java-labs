@@ -1,49 +1,35 @@
 package ru.nsu.fit.ibaksheev.minesweeper.controller;
 
 import com.google.gson.Gson;
-import lombok.*;
-import ru.nsu.fit.ibaksheev.minesweeper.model.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
+import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
+import ru.nsu.fit.ibaksheev.minesweeper.model.Model;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class OnlineGameController implements GameController {
+    final String addr;
+    final int port;
     @Getter
     private final GameModel syncModel;
     @Getter
     private final GameModel model;
-
-    public enum NetworkState {
-        CONNECTION,
-        OPPONENT_WON,
-        OPPONENT_LOST,
-        WAITING_FOR_OPPONENT,
-        CONNECTED,
-        DISCONNECTED,
-        ERROR
-    }
-
     @Getter
     private final Model<NetworkState> networkModel;
-
+    private final BlockingQueue<Message> messageQueue = new LinkedBlockingDeque<>();
     private Socket socket;
     private PrintWriter socketOut;
     private BufferedReader socketIn;
-    private final BlockingQueue<Message> messageQueue = new LinkedBlockingDeque<>();
-
-    final String addr;
-    final int port;
-
-    @Data
-    @AllArgsConstructor
-    public static class Message {
-        private String event;
-        private int x, y;
-        private GameData gameData;
-    }
 
     public OnlineGameController(String addr, int port) {
         this.addr = addr;
@@ -57,28 +43,30 @@ public class OnlineGameController implements GameController {
     }
 
     @Override
-    public void shoot(int x, int y) throws InvalidArgumentException {
-        model.shoot(x, y);
-        messageQueue.add(new Message("shoot", x, y, null));
-    }
-
-    @Override
     public void flag(int x, int y) throws InvalidArgumentException {
         model.flag(x, y);
         messageQueue.add(new Message("flag", x, y, null));
     }
 
-    public void connect() {
-        System.out.println("connecting...");
+    @Override
+    public void shoot(int x, int y) throws InvalidArgumentException {
+        model.shoot(x, y);
+        messageQueue.add(new Message("shoot", x, y, null));
+    }
 
+    private boolean alive() {
+        return networkModel.getProperty() == NetworkState.CONNECTION || networkModel.getProperty() == NetworkState.WAITING_FOR_OPPONENT || networkModel.getProperty() == NetworkState.CONNECTED;
+    }
+
+    public void connect() {
         try {
             socket = new Socket(addr, port);
             socketOut = new PrintWriter(socket.getOutputStream(), true);
             socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             // wait until connected
-            new Thread(() -> {
+            var readThread = new Thread(() -> {
                 var gson = new Gson();
-                while (true) {
+                while (alive()) {
                     try {
                         var messageJson = socketIn.readLine();
                         var message = gson.fromJson(messageJson, Message.class);
@@ -121,10 +109,13 @@ public class OnlineGameController implements GameController {
                         return;
                     }
                 }
-            }).start();
-            new Thread(() -> {
+                System.out.println("stopped");
+            });
+            readThread.setDaemon(true);
+            readThread.start();
+            var sendThread = new Thread(() -> {
                 var gson = new Gson();
-                while (true) {
+                while (alive()) {
                     Message message = null;
                     try {
                         message = messageQueue.take();
@@ -135,9 +126,10 @@ public class OnlineGameController implements GameController {
                         socketOut.println(gson.toJson(message));
                     }
                 }
-            }).start();
-
-//            messageQueue.add(new Message("field", 0, 0, model.getProperty()));
+                System.out.println("stopped");
+            });
+            sendThread.setDaemon(true);
+            sendThread.start();
         } catch (IOException e) {
             e.printStackTrace();
             networkModel.setProperty(NetworkState.ERROR);
@@ -153,6 +145,23 @@ public class OnlineGameController implements GameController {
             }
         }
         messageQueue.add(new Message("disconnect", 0, 0, null));
-        System.exit(0);
+    }
+
+    public enum NetworkState {
+        CONNECTION,
+        OPPONENT_WON,
+        OPPONENT_LOST,
+        WAITING_FOR_OPPONENT,
+        CONNECTED,
+        DISCONNECTED,
+        ERROR
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class Message {
+        private String event;
+        private int x, y;
+        private GameData gameData;
     }
 }

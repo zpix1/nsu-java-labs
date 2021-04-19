@@ -13,11 +13,13 @@ public class Server {
         var socket = new ServerSocket(port, 6);
         while (true) {
             var firstClient = new Client(socket.accept());
+            System.out.println("first client connected");
             firstClient.sendMessage(new OnlineGameController.Message("wait", 0,0,null));
             var secondClient =  new Client(socket.accept());
+            System.out.println("second client connected");
 
             var game = new GameModel();
-            game.setGameData(new GameData(new SettingsManager.Settings(5, 5, 3)));
+            game.setGameData(new GameData(new SettingsManager.Settings(10, 10, 10)));
             game.pregenerate();
 
             firstClient.listen(secondClient::sendMessage);

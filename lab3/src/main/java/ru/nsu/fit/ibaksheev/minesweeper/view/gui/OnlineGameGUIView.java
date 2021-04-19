@@ -1,9 +1,11 @@
 package ru.nsu.fit.ibaksheev.minesweeper.view.gui;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import ru.nsu.fit.ibaksheev.minesweeper.controller.OnlineGameController;
-import ru.nsu.fit.ibaksheev.minesweeper.model.*;
+import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
+import ru.nsu.fit.ibaksheev.minesweeper.model.Model;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 import ru.nsu.fit.ibaksheev.minesweeper.view.GameView;
 
@@ -15,20 +17,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class OnlineGameGUIView implements GameView {
+    private static final int ANIMATION_STEP = 0;
     private final GameModel syncModel;
     private final GameModel model;
     private final Model<OnlineGameController.NetworkState> networkModel;
     private final OnlineGameController controller;
-
-
-    private static final int ANIMATION_STEP = 0;
-    private JFrame window;
-    private GUIField field;
-    private GUIField syncField;
-    private JLabel label;
-
     private final BlockingQueue<OnlineGameGUIView.AnimationCell> animationQueue = new LinkedBlockingDeque<>();
-
     private final MouseAdapter adapter = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
@@ -49,55 +43,82 @@ public class OnlineGameGUIView implements GameView {
             }
         }
     };
+    private final MouseAdapter syncAdapter = new MouseAdapter() {
+    };
+    private JFrame window;
+    private GUIField field;
+    private GUIField syncField;
+    private JLabel label;
 
-    private final MouseAdapter syncAdapter = new MouseAdapter() {};
-
-    private void endGame() {
-        window.setVisible(false);
-        window.dispose();
-        controller.endGame();
+    public OnlineGameGUIView(OnlineGameController controller) {
+        this.controller = controller;
+        model = controller.getModel();
+        syncModel = controller.getSyncModel();
+        networkModel = controller.getNetworkModel();
     }
 
-    private void won() {
-        JOptionPane.showInternalMessageDialog(null, "You won!",
-                "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
-        endGame();
-    }
-
-    private void lost() {
-        JOptionPane.showInternalMessageDialog(null, "You lost!",
-                "Bad!", JOptionPane.INFORMATION_MESSAGE);
-        endGame();
-    }
-
-    private void opponentWon() {
-        JOptionPane.showInternalMessageDialog(null, "You lost! (your opponent won)",
-                "Bad!", JOptionPane.INFORMATION_MESSAGE);
-        endGame();
-    }
-
-    private void opponentLost() {
-        JOptionPane.showInternalMessageDialog(null, "You won! (your opponent lost)",
-                "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
-        endGame();
-    }
-
-    public void waitConnection() {
-        label.setText("waiting for player...");
-    }
-    public void errorConnection() {
-        JOptionPane.showInternalMessageDialog(null, "Error!",
-                "Error!", JOptionPane.INFORMATION_MESSAGE);
-        endGame();
-    }
-
-    private void afterDisconnection(){
+    private void afterDisconnection() {
         window.removeAll();
 
         var loadingLabel = new JLabel("Disconnected...");
         window.add(loadingLabel, BorderLayout.CENTER);
 
         window.pack();
+    }
+
+    @Override
+    public void start() {
+        SwingUtilities.invokeLater(this::init);
+        networkModel.subscribe(model -> {
+            System.out.println("updateProp");
+            var newState = networkModel.getProperty();
+            switch (newState) {
+                case CONNECTED:
+                    System.out.println("CONNECTED");
+                    SwingUtilities.invokeLater(this::afterConnection);
+                    break;
+                case WAITING_FOR_OPPONENT:
+                    SwingUtilities.invokeLater(this::waitConnection);
+                    break;
+                case OPPONENT_LOST:
+                    SwingUtilities.invokeLater(this::opponentLost);
+                    endGame();
+                    break;
+                case OPPONENT_WON:
+                    SwingUtilities.invokeLater(this::opponentWon);
+                    endGame();
+                    break;
+                case DISCONNECTED:
+                    endGame();
+                    break;
+                case ERROR:
+                    System.out.println("disc");
+                    SwingUtilities.invokeLater(this::errorConnection);
+                    endGame();
+                    break;
+            }
+        }, "update");
+        controller.connect();
+    }
+
+    public void init() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        window = new JFrame("Minesweeper Online");
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        window.setResizable(false);
+        window.setLayout(new BorderLayout(5, 5));
+
+        label = new JLabel("Connecting...");
+        window.add(label, BorderLayout.CENTER);
+        window.pack();
+        window.setVisible(true);
+        window.createBufferStrategy(2);
     }
 
     private void afterConnection() {
@@ -139,63 +160,44 @@ public class OnlineGameGUIView implements GameView {
         window.setVisible(true);
     }
 
-    public void init() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        window = new JFrame("Minesweeper Online");
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        window.setResizable(false);
-        window.setLayout(new BorderLayout(5, 5));
-
-        label = new JLabel("Connecting...");
-        window.add(label, BorderLayout.CENTER);
-        window.pack();
-        window.setVisible(true);
-        window.createBufferStrategy(2);
+    public void waitConnection() {
+        label.setText("waiting for player...");
     }
 
-    public OnlineGameGUIView(OnlineGameController controller) {
-        this.controller = controller;
-        model = controller.getModel();
-        syncModel = controller.getSyncModel();
-        networkModel = controller.getNetworkModel();
+    private void opponentLost() {
+        JOptionPane.showInternalMessageDialog(null, "You won! (your opponent lost)",
+                "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
     }
 
-    @Override
-    public void start() {
-        SwingUtilities.invokeLater(this::init);
-        networkModel.subscribe(model -> {
-            System.out.println("updateProp");
-            var newState = networkModel.getProperty();
-            switch (newState) {
-                case CONNECTED:
-                    System.out.println("CONNECTED");
-                    SwingUtilities.invokeLater(this::afterConnection);
-                    break;
-                case WAITING_FOR_OPPONENT:
-                    SwingUtilities.invokeLater(this::waitConnection);
-                    break;
-                case OPPONENT_LOST:
-                    SwingUtilities.invokeLater(this::opponentLost);
-                    break;
-                case OPPONENT_WON:
-                    SwingUtilities.invokeLater(this::opponentWon);
-                    break;
-                case DISCONNECTED:
-                    endGame();
-                    break;
-                case ERROR:
-                    System.out.println("disc");
-                    SwingUtilities.invokeLater(this::errorConnection);
-                    break;
-            }
-        }, "update");
-        controller.connect();
+    private void opponentWon() {
+        JOptionPane.showInternalMessageDialog(null, "You lost! (your opponent won)",
+                "Bad!", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
+    }
+
+    private void endGame() {
+        window.setVisible(false);
+        controller.endGame();
+    }
+
+    public void errorConnection() {
+        JOptionPane.showInternalMessageDialog(null, "Error!",
+                "Error!", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
+
+    }
+
+    private void lost() {
+        JOptionPane.showInternalMessageDialog(null, "You lost!",
+                "Bad!", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
+    }
+
+    private void won() {
+        JOptionPane.showInternalMessageDialog(null, "You won!",
+                "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
     }
 
     @Data

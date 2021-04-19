@@ -53,6 +53,7 @@ public class Client {
                     callback.callback(message);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    break;
                 }
             }
         });
