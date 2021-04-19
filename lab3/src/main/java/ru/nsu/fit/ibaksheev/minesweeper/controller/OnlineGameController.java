@@ -5,21 +5,32 @@ import lombok.Getter;
 import ru.nsu.fit.ibaksheev.minesweeper.model.*;
 import ru.nsu.fit.ibaksheev.minesweeper.model.exceptions.InvalidArgumentException;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
 public class OnlineGameController implements GameController {
     @Getter
-    GameModel syncModel;
+    private GameModel syncModel;
     @Getter
-    GameModel model;
+    private GameModel model;
 
     public enum NetworkState {
         CONNECTION,
         WAITING_FOR_PLAYER,
         CONNECTED,
-        DISCONNECTED
+        DISCONNECTED,
+        ERROR
     }
 
     @Getter
-    Model<NetworkState> networkModel;
+    private Model<NetworkState> networkModel;
+
+    private Socket socket;
+    private PrintWriter socketOut;
+    private BufferedReader socketIn;
 
     public OnlineGameController() {
         syncModel = new GameModel();
@@ -50,11 +61,20 @@ public class OnlineGameController implements GameController {
 
     public void connect() {
         System.out.println("connecting...");
+
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
+            // TODO: Add to props
+            socket = new Socket("localhost", 5000);
+            socketOut = new PrintWriter(socket.getOutputStream(), true);
+            socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            var response = socketIn.readLine();
+        } catch (IOException e) {
             e.printStackTrace();
+            networkModel.setProperty(NetworkState.ERROR);
+            return;
         }
+
         System.out.println("connected");
         networkModel.setProperty(NetworkState.CONNECTED);
     }
