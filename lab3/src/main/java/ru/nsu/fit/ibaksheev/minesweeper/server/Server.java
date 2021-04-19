@@ -1,6 +1,5 @@
 package ru.nsu.fit.ibaksheev.minesweeper.server;
 
-import org.junit.Test;
 import ru.nsu.fit.ibaksheev.minesweeper.controller.OnlineGameController;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameData;
 import ru.nsu.fit.ibaksheev.minesweeper.model.GameModel;
@@ -21,7 +20,7 @@ public class Server {
             game.setGameData(new GameData(new SettingsManager.Settings(5, 5, 3)));
             game.pregenerate();
 
-            firstClient.listen(firstClient::sendMessage);
+            firstClient.listen(secondClient::sendMessage);
             secondClient.listen(firstClient::sendMessage);
 
             firstClient.sendMessage(new OnlineGameController.Message("yourField", 0, 0, game.getProperty()));
