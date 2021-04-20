@@ -130,6 +130,7 @@ public class OnlineGameController implements GameController {
             sendThread.setDaemon(true);
             sendThread.start();
         } catch (IOException e) {
+            System.out.println("ERROR");
             e.printStackTrace();
             networkModel.setProperty(NetworkState.ERROR);
         }
@@ -143,7 +144,9 @@ public class OnlineGameController implements GameController {
                 messageQueue.add(new Message("lost", 0, 0, null));
             }
         }
-        socketOut.println((new Gson()).toJson(new Message("disconnect", 0, 0, null)));
+        if (socketOut != null) {
+            socketOut.println((new Gson()).toJson(new Message("disconnect", 0, 0, null)));
+        }
         networkModel.setProperty(NetworkState.DISCONNECTED);
     }
 

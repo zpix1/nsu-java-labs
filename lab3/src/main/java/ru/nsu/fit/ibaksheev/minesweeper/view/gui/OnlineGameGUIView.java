@@ -88,7 +88,9 @@ public class OnlineGameGUIView implements GameView {
                     break;
                 case DISCONNECTED:
                     endGame();
-                    SwingUtilities.invokeLater(this::errorConnection);
+                    if (networkModel.getProperty() == OnlineGameController.NetworkState.CONNECTED)
+                    System.exit(0);
+//                    SwingUtilities.invokeLater(this::errorConnection);
                     break;
                 case ERROR:
                     controller.endGame();
@@ -184,7 +186,9 @@ public class OnlineGameGUIView implements GameView {
     }
 
     private void endGame() {
-        window.setVisible(false);
+        if (window != null) {
+            window.setVisible(false);
+        }
         controller.endGame();
     }
 
