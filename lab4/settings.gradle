@@ -1,0 +1,3 @@
+rootProject.name = 'lab4'
+include 'ru.nsu.fit.ibaksheev.threadpool'
+
