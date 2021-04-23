@@ -1,5 +1,5 @@
 package ru.nsu.fit.ibaksheev.threadpool;
 
-public class TaskWorker {
+public class TaskWorker extends Thread {
 
 }
