@@ -35,5 +35,7 @@ public class ThreadPoolTests {
             var result = queue.poll(1000, TimeUnit.MILLISECONDS);
             assertNotNull(result, "result should be obtained in 1 second");
         }
+
+        tp.shutdown();
     }
 }
