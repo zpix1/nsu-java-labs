@@ -16,7 +16,7 @@ public class CarBodySupplier implements Supplier<CarBody> {
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            return null;
         }
         return new CarBody();
     }

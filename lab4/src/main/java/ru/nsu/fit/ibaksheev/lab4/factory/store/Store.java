@@ -19,7 +19,6 @@ public class Store<T> implements Supplier<T>, Consumer<T> {
         try {
             return store.take();
         } catch (InterruptedException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -28,8 +27,7 @@ public class Store<T> implements Supplier<T>, Consumer<T> {
     public void accept(T part) {
         try {
             store.put(part);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
     }
 }

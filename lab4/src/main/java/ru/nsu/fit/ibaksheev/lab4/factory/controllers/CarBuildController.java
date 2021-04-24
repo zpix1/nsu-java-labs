@@ -32,19 +32,21 @@ public class CarBuildController extends Thread {
         threadPool.shutdown();
     }
 
-    public void joinAll() throws InterruptedException {
-        threadPool.joinAll();
-        this.join();
+    public void interruptAll() {
+        threadPool.interruptAll();
+        this.interrupt();
     }
 
     @Override
     public void run() {
-        CarBody cachedBody;
-
         while (isRunning) {
             var body = carBodyStore.get();
             var engine = carEngineStore.get();
             var accessory = carAccessoryStore.get();
+
+            if (body == null || engine == null || accessory == null) {
+                continue;
+            }
 
             var task = new Task() {
                 @Override

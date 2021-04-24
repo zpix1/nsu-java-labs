@@ -36,10 +36,10 @@ public class ThreadPool {
         isRunning = false;
     }
 
-    public void joinAll() throws InterruptedException {
-        if (isRunning) throw new RuntimeException("can't join running threads");
+    public void interruptAll() {
+        if (isRunning) throw new RuntimeException("can't join interrupt threads");
         for (var t: workers) {
-            t.join();
+            t.interrupt();
         }
     }
 
@@ -51,8 +51,7 @@ public class ThreadPool {
                     var task = queue.take();
                     logger.debug("Executing task '" + task.getName() + "'");
                     task.performWork();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ignored) {
                 }
             }
         }

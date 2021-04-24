@@ -81,7 +81,7 @@ public class Factory {
         logger.info("Controllers started");
     }
 
-    public void shutdown(boolean doJoin) {
+    public void shutdown(boolean interrupt) {
         logger.info("Shutdown issued");
 
         carBodyProductionThread.shutdown();
@@ -91,21 +91,17 @@ public class Factory {
         carBuildController.shutdown();
         carDealController.shutdown();
 
-        if (doJoin) {
-            try {
-                logger.info("Joining producer threads");
+        if (interrupt) {
+            logger.info("Interrupting producer threads");
 
-                carBodyProductionThread.join();
-                carEngineProductionThread.join();
-                carAccessoryProductionThread.join();
+            carBodyProductionThread.interrupt();
+            carEngineProductionThread.interrupt();
+            carAccessoryProductionThread.interrupt();
 
-                logger.info("Joining controller threads");
+            logger.info("Interrupting controller threads");
 
-                carBuildController.joinAll();
-                carDealController.joinAll();
-            } catch (InterruptedException e) {
-                logger.error("Interrupt while joining producer threads: " + e.getLocalizedMessage());
-            }
+            carBuildController.interruptAll();
+            carDealController.interruptAll();
         }
     }
 }

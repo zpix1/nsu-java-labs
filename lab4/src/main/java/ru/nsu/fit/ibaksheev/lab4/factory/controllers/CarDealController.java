@@ -35,15 +35,18 @@ public class CarDealController extends Thread {
         threadPool.shutdown();
     }
 
-    public void joinAll() throws InterruptedException {
-        threadPool.joinAll();
-        this.join();
+    public void interruptAll() {
+        threadPool.interruptAll();
+        this.interrupt();
     }
 
     @Override
     public void run() {
         while (isRunning) {
             var car = outputStore.get();
+            if (car == null) {
+                continue;
+            }
             var task = new Task() {
                 @Override
                 public String getName() {
@@ -51,8 +54,7 @@ public class CarDealController extends Thread {
                 }
 
                 @Override
-                public void performWork() throws InterruptedException {
-
+                public void performWork() {
                     totalSold.incrementAndGet();
                 }
             };
