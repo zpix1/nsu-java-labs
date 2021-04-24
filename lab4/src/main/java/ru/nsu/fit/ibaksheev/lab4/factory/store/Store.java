@@ -7,7 +7,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class Store<T extends CarPart> implements Supplier<T>, Consumer<T> {
+public class Store<T> implements Supplier<T>, Consumer<T> {
     private final BlockingQueue<T> store;
 
     public Store(int storeSize) {

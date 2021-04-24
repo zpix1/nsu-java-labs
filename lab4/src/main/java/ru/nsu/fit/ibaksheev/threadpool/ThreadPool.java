@@ -36,6 +36,13 @@ public class ThreadPool {
         isRunning = false;
     }
 
+    public void joinAll() throws InterruptedException {
+        if (isRunning) throw new RuntimeException("can't join running threads");
+        for (var t: workers) {
+            t.join();
+        }
+    }
+
     private final class TaskWorker extends Thread {
         @Override
         public void run() {

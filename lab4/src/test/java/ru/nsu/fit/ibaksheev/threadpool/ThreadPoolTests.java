@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ThreadPoolTests {
     @Test
-    public void itDoesItsWork() throws InterruptedException {
+    public void threadPoolDoesWork() throws InterruptedException {
         var tp = new ThreadPool(4, 1024);
         var queue = new ArrayBlockingQueue<Double>(100);
 
