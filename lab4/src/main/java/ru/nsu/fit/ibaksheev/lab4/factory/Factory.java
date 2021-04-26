@@ -4,7 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.ibaksheev.lab4.factory.controllers.CarBuildController;
 import ru.nsu.fit.ibaksheev.lab4.factory.controllers.CarDealController;
+import ru.nsu.fit.ibaksheev.lab4.factory.controllers.CarPriceController;
 import ru.nsu.fit.ibaksheev.lab4.factory.parts.*;
+import ru.nsu.fit.ibaksheev.lab4.factory.store.Dealer;
 import ru.nsu.fit.ibaksheev.lab4.factory.store.Store;
 import ru.nsu.fit.ibaksheev.lab4.factory.suppliers.CarAccessorySupplier;
 import ru.nsu.fit.ibaksheev.lab4.factory.suppliers.CarBodySupplier;
@@ -32,6 +34,9 @@ public class Factory {
 
     private final CarBuildController carBuildController;
     private final CarDealController carDealController;
+    private final CarPriceController carPriceController;
+
+    private final Dealer dealer;
 
     public int getTotalSold() {
         return carDealController.getTotalSold();
@@ -60,10 +65,28 @@ public class Factory {
         carAccessoryStore = new Store<>(Integer.parseInt((String) properties.get("CAR_ACCESSORY.STORE_SIZE")));
         carAccessoryProductionThread = new ProductionThread<>(carAccessorySupplier, carAccessoryStore);
 
+        dealer = new Dealer();
+
         logger.info("Stores, suppliers and threads created");
 
         carBuildController = new CarBuildController(carBodyStore, carEngineStore, carAccessoryStore, carStore);
-        carDealController = new CarDealController(carStore);
+        carPriceController = new CarPriceController(dealer, new CarPriceController.FactoryProductionControlAdapter() {
+            @Override
+            public boolean isStopped() {
+                return carBuildController.isPaused();
+            }
+
+            @Override
+            public void pauseProduction() {
+                carBuildController.pauseProduction();
+            }
+
+            @Override
+            public void continueProduction() {
+                carBuildController.continueProduction();
+            }
+        });
+        carDealController = new CarDealController(carStore, dealer);
 
         logger.info("Controllers created");
     }
@@ -72,6 +95,7 @@ public class Factory {
         carBodyProductionThread.start();
         carEngineProductionThread.start();
         carAccessoryProductionThread.start();
+        carPriceController.start();
 
         logger.info("Production threads started");
 

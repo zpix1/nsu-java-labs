@@ -3,31 +3,31 @@ package ru.nsu.fit.ibaksheev.lab4.factory.controllers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.ibaksheev.lab4.factory.parts.Car;
-import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarAccessory;
-import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarBody;
-import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarEngine;
+import ru.nsu.fit.ibaksheev.lab4.factory.store.Dealer;
 import ru.nsu.fit.ibaksheev.threadpool.Task;
 import ru.nsu.fit.ibaksheev.threadpool.ThreadPool;
 
+import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class CarDealController extends Thread {
     private final Supplier<Car> outputStore;
     private final ThreadPool threadPool;
+    private final AtomicInteger totalSold = new AtomicInteger(0);
+    private final Dealer dealer;
+    private Logger logger = LogManager.getLogger();
     private boolean isRunning = true;
 
-    private final AtomicInteger totalSold = new AtomicInteger(0);
-
-    public int getTotalSold() {
-        return totalSold.intValue();
-    }
-
-    public CarDealController(Supplier<Car> outputStore) {
+    public CarDealController(Supplier<Car> outputStore, Dealer dealer) {
+        this.dealer = dealer;
         this.outputStore = outputStore;
 
         threadPool = new ThreadPool(4, 1000);
+    }
+
+    public int getTotalSold() {
+        return totalSold.intValue();
     }
 
     public void shutdown() {
@@ -47,6 +47,7 @@ public class CarDealController extends Thread {
             if (car == null) {
                 continue;
             }
+
             var task = new Task() {
                 @Override
                 public String getName() {

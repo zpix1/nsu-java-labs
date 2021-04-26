@@ -16,7 +16,7 @@ public class FactoryTests {
     public void factoryWorks() throws IOException, InterruptedException {
         var factory = new Factory();
         factory.start();
-        Thread.sleep(10000);
+        Thread.sleep(30000);
         logger.info("shutting down");
         factory.shutdown(true);
         logger.info("done");
