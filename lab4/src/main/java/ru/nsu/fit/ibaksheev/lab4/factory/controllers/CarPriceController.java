@@ -1,6 +1,5 @@
 package ru.nsu.fit.ibaksheev.lab4.factory.controllers;
 
-import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.ibaksheev.lab4.factory.store.Dealer;
@@ -27,12 +26,12 @@ public class CarPriceController extends Thread {
             var carPrice = dealer.getCarPrice();
             if (isCarPriceOk(carPrice)) {
                 logger.info(carPrice);
-                if (adapter.isStopped()) {
+                if (adapter.isPaused()) {
                     logger.info("Car price is ok: " + carPrice + "; starting production back...");
                     adapter.continueProduction();
                 }
-            } else if (!adapter.isStopped()) {
-                if (!adapter.isStopped()) {
+            } else if (!adapter.isPaused()) {
+                if (!adapter.isPaused()) {
                     logger.info("Car price is NOT ok: " + carPrice + "; stopping production...");
                     adapter.pauseProduction();
                 }
@@ -50,7 +49,7 @@ public class CarPriceController extends Thread {
     }
 
     public interface FactoryProductionControlAdapter {
-        boolean isStopped();
+        boolean isPaused();
 
         void pauseProduction();
 

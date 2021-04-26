@@ -11,7 +11,11 @@ public class Store<T> implements Supplier<T>, Consumer<T> {
     private final BlockingQueue<T> store;
 
     public Store(int storeSize) {
-        store = new ArrayBlockingQueue<T>(storeSize);
+        store = new ArrayBlockingQueue<>(storeSize);
+    }
+
+    public int getSize() {
+        return store.size();
     }
 
     @Override

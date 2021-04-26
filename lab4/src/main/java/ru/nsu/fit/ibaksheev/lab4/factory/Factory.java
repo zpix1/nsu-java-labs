@@ -5,7 +5,10 @@ import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.ibaksheev.lab4.factory.controllers.CarBuildController;
 import ru.nsu.fit.ibaksheev.lab4.factory.controllers.CarDealController;
 import ru.nsu.fit.ibaksheev.lab4.factory.controllers.CarPriceController;
-import ru.nsu.fit.ibaksheev.lab4.factory.parts.*;
+import ru.nsu.fit.ibaksheev.lab4.factory.parts.Car;
+import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarAccessory;
+import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarBody;
+import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarEngine;
 import ru.nsu.fit.ibaksheev.lab4.factory.store.Dealer;
 import ru.nsu.fit.ibaksheev.lab4.factory.store.Store;
 import ru.nsu.fit.ibaksheev.lab4.factory.suppliers.CarAccessorySupplier;
@@ -13,6 +16,7 @@ import ru.nsu.fit.ibaksheev.lab4.factory.suppliers.CarBodySupplier;
 import ru.nsu.fit.ibaksheev.lab4.factory.suppliers.CarEngineSupplier;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Properties;
 
 public class Factory {
@@ -38,9 +42,6 @@ public class Factory {
 
     private final Dealer dealer;
 
-    public int getTotalSold() {
-        return carDealController.getTotalSold();
-    }
 
     public Factory() throws IOException {
         var properties = new Properties();
@@ -72,7 +73,7 @@ public class Factory {
         carBuildController = new CarBuildController(carBodyStore, carEngineStore, carAccessoryStore, carStore);
         carPriceController = new CarPriceController(dealer, new CarPriceController.FactoryProductionControlAdapter() {
             @Override
-            public boolean isStopped() {
+            public boolean isPaused() {
                 return carBuildController.isPaused();
             }
 
@@ -95,12 +96,14 @@ public class Factory {
         carBodyProductionThread.start();
         carEngineProductionThread.start();
         carAccessoryProductionThread.start();
-        carPriceController.start();
 
         logger.info("Production threads started");
 
         carBuildController.start();
         carDealController.start();
+
+        // No need to be stopped, daemon
+        carPriceController.start();
 
         logger.info("Controllers started");
     }
@@ -128,4 +131,30 @@ public class Factory {
             carDealController.interruptAll();
         }
     }
+
+    public int getCarBodyStoreSize() {
+        return carBodyStore.getSize();
+    }
+
+    public int getCarEngineStoreSize() {
+        return carEngineStore.getSize();
+    }
+
+    public int getCarAccessoryStoreSize() {
+        return carAccessoryStore.getSize();
+    }
+
+
+    public BigDecimal getDealerCarPrice() {
+        return dealer.getCarPrice();
+    }
+
+    public int getTotalSold() {
+        return carDealController.getTotalSold();
+    }
+
+    public boolean isBuildingPaused() {
+        return carBuildController.isPaused();
+    }
+
 }
