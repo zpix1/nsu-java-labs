@@ -5,13 +5,19 @@ import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.ibaksheev.lab4.factory.Factory;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Hashtable;
+import java.util.function.Function;
 
 public class FactoryWindow extends JFrame {
     private final Logger logger = LogManager.getLogger();
+
+    private static final int DELAY_VARIETY = 10;
 
     private Factory factory;
 
@@ -20,6 +26,7 @@ public class FactoryWindow extends JFrame {
     private JLabel carEngineStoreSizeLabel;
     private JLabel carAccessoryStoreSizeLabel;
     private JLabel totalSoldLabel;
+    private JLabel totalGainLabel;
     private JLabel buildStateLabel;
 
     public FactoryWindow() {
@@ -33,22 +40,61 @@ public class FactoryWindow extends JFrame {
         SwingUtilities.invokeLater(this::init);
     }
 
-    @Override
-    public void dispose() {
-        factory.shutdown(true);
-        System.exit(0);
+    private interface SliderListener {
+        void valueChanged(int newValue);
+    }
+
+    private Box createSlider(Integer startingDelay, String description, SliderListener listener) {
+        var panel = new Box(BoxLayout.Y_AXIS);
+
+        int min = startingDelay / DELAY_VARIETY;
+        int max = startingDelay * DELAY_VARIETY;
+        var slider = new JSlider(min, max, startingDelay);
+
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
+        labelTable.put(min, new JLabel(Integer.toString(min)));
+        labelTable.put(max, new JLabel(Integer.toString(max)));
+        slider.setLabelTable(labelTable);
+        slider.setPaintLabels(true);
+
+        var label = new JLabel(description + startingDelay);
+
+        slider.addChangeListener(e -> {
+            int value = ((JSlider)e.getSource()).getValue();
+            label.setText(description + value);
+            listener.valueChanged(value);
+        });
+
+        panel.add(label);
+        panel.add(slider);
+
+        return panel;
     }
 
     private void init() {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        setLayout(new BorderLayout());
 
         var mainPanel = new JPanel();
 
         mainPanel.setLayout(new GridBagLayout());
 
         var gbc = new GridBagConstraints();
+
+//        I tried to make GridBagLayout fill window, but he just can't... so:
+        setResizable(false);
+//        mainPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+//            @Override
+//            public void componentResized(java.awt.event.ComponentEvent evt) {
+//                GridBagLayout layout = (GridBagLayout) getLayout();
+//                JPanel panel = (JPanel) evt.getComponent();
+//                int width = panel.getWidth();
+//                int height = panel.getHeight();
+//                int wGap = panel.getInsets().left + panel.getInsets().right;
+//                int hGap = panel.getInsets().top + panel.getInsets().bottom;
+//                layout.columnWidths = new int[]{width / 2 - wGap, width / 2 - wGap};
+//                layout.rowHeights = new int[]{height - hGap};
+//            }
+//        });
 
         getContentPane().add(mainPanel);
 
@@ -80,6 +126,9 @@ public class FactoryWindow extends JFrame {
             totalSoldLabel = new JLabel();
             factoryStatePanel.addIn(totalSoldLabel);
 
+            totalGainLabel = new JLabel();
+            factoryStatePanel.addIn(totalGainLabel);
+
             buildStateLabel = new JLabel();
             factoryStatePanel.addIn(buildStateLabel);
         }
@@ -91,16 +140,21 @@ public class FactoryWindow extends JFrame {
             gbc.gridx = 0;
             gbc.gridy = 1;
             mainPanel.add(factoryControlPanel, gbc);
+
+            factoryControlPanel.addIn(createSlider(factory.getCarBodySupplierDelay(), "Car body delay: ", (int value) -> factory.setCarBodySupplierDelay(value)));
+
+
+            factoryControlPanel.addIn(createSlider(factory.getCarEngineSupplierDelay(), "Car engine delay: ", (int value) -> factory.setCarEngineSupplierDelay(value)));
+
+
+            factoryControlPanel.addIn(createSlider(factory.getCarAccessorySupplierDelay(), "Car accessory delay: ", (int value) -> factory.setCarAccessorySupplierDelay(value)));
         }
 
-        var timer = new Timer(200, (ActionEvent e) -> {
-            updateInformation();
-        });
+        var timer = new Timer(200, (ActionEvent e) -> updateInformation());
         timer.start();
 
         updateInformation();
         pack();
-        setPreferredSize(new Dimension(500, 500));
         setVisible(true);
     }
 
@@ -110,9 +164,15 @@ public class FactoryWindow extends JFrame {
         carEngineStoreSizeLabel.setText("Car engine storage size: " + factory.getCarEngineStoreSize() + " / " + factory.getCarEngineStoreCapacity());
         carAccessoryStoreSizeLabel.setText("Car accessory storage size: " + factory.getCarAccessoryStoreSize() + " / " + factory.getCarAccessoryStoreCapacity());
         totalSoldLabel.setText("Total sold: " + factory.getTotalSold());
+        totalGainLabel.setText("Total gain: " + new DecimalFormat("#0.#").format(factory.getTotalGain()));
         buildStateLabel.setText("Build state: " + (factory.isBuildingPaused() ? "paused" : "running"));
     }
 
+    @Override
+    public void dispose() {
+        factory.shutdown(true);
+        System.exit(0);
+    }
 
     void initStateLabels() {
 

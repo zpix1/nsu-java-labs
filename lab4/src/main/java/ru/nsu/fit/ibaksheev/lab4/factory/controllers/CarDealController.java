@@ -15,6 +15,8 @@ public class CarDealController extends Thread {
     private final Supplier<Car> outputStore;
     private final ThreadPool threadPool;
     private final AtomicInteger totalSold = new AtomicInteger(0);
+    private BigDecimal totalGain = new BigDecimal(0);
+
     private final Dealer dealer;
     private Logger logger = LogManager.getLogger();
     private boolean isRunning = true;
@@ -28,6 +30,14 @@ public class CarDealController extends Thread {
 
     public int getTotalSold() {
         return totalSold.intValue();
+    }
+
+    public BigDecimal getTotalGain() {
+        return totalGain;
+    }
+
+    private synchronized void addMoney(BigDecimal gain) {
+        totalGain = totalGain.add(gain);
     }
 
     public void shutdown() {
@@ -57,6 +67,7 @@ public class CarDealController extends Thread {
                 @Override
                 public void performWork() {
                     totalSold.incrementAndGet();
+                    addMoney(dealer.sell(car));
                 }
             };
             threadPool.addTask(task);

@@ -6,16 +6,14 @@ import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarAccessory;
 
 import java.util.function.Supplier;
 
-public class CarAccessorySupplier implements Supplier<CarAccessory> {
-    private final int delay;
-
+public class CarAccessorySupplier extends SupplierWithDelay<CarAccessory> {
     public CarAccessorySupplier(int delay) {
-        this.delay = delay;
+        super(delay);
     }
 
     public CarAccessory get() {
         try {
-            Thread.sleep(delay);
+            Thread.sleep(getDelay());
         } catch (InterruptedException e) {
             return null;
         }
