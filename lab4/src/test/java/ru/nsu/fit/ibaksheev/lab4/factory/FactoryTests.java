@@ -1,4 +1,4 @@
-package ru.nsu.fit.ibaksheev.threadpool;
+package ru.nsu.fit.ibaksheev.lab4.factory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
