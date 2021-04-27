@@ -5,8 +5,8 @@ import javax.swing.border.Border;
 import java.awt.*;
 
 public class BorderedPanel extends JPanel {
-    Border border;
-    JPanel innerPanel;
+    private final Border border;
+    private final JPanel innerPanel;
 
     public void addIn(Component comp) {
         innerPanel.add(comp);

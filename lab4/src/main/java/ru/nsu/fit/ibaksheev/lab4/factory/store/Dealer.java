@@ -1,6 +1,5 @@
 package ru.nsu.fit.ibaksheev.lab4.factory.store;
 
-import lombok.Getter;
 import ru.nsu.fit.ibaksheev.lab4.factory.parts.Car;
 
 import java.math.BigDecimal;

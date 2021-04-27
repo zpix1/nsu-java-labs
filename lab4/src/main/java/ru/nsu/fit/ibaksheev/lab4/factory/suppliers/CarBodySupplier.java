@@ -1,9 +1,6 @@
 package ru.nsu.fit.ibaksheev.lab4.factory.suppliers;
 
 import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarBody;
-import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarPart;
-
-import java.util.function.Supplier;
 
 public class CarBodySupplier extends SupplierWithDelay<CarBody> {
     public CarBodySupplier(int delay) {

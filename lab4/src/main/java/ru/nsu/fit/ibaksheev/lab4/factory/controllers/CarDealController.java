@@ -18,7 +18,7 @@ public class CarDealController extends Thread {
     private BigDecimal totalGain = new BigDecimal(0);
 
     private final Dealer dealer;
-    private Logger logger = LogManager.getLogger();
+    private final Logger logger = LogManager.getLogger();
     private boolean isRunning = true;
 
     public CarDealController(Supplier<Car> outputStore, Dealer dealer) {

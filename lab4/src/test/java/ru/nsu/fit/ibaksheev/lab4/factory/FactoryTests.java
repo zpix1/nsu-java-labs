@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 
 public class FactoryTests {
-    Logger logger = LogManager.getLogger(Factory.class);
+    final Logger logger = LogManager.getLogger(Factory.class);
 
     @Test
     public void factoryWorks() throws IOException, InterruptedException {

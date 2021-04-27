@@ -5,14 +5,11 @@ import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.ibaksheev.lab4.factory.Factory;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
-import java.util.function.Function;
 
 public class FactoryWindow extends JFrame {
     private final Logger logger = LogManager.getLogger();
@@ -174,7 +171,4 @@ public class FactoryWindow extends JFrame {
         System.exit(0);
     }
 
-    void initStateLabels() {
-
-    }
 }

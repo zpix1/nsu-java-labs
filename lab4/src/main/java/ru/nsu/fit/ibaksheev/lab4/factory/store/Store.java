@@ -1,7 +1,5 @@
 package ru.nsu.fit.ibaksheev.lab4.factory.store;
 
-import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarPart;
-
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.function.Consumer;
