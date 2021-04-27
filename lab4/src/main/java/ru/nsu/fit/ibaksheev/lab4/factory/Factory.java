@@ -135,15 +135,17 @@ public class Factory {
     public int getCarBodyStoreSize() {
         return carBodyStore.getSize();
     }
+    public int getCarBodyStoreCapacity() { return carBodyStore.getCapacity(); }
 
     public int getCarEngineStoreSize() {
         return carEngineStore.getSize();
     }
+    public int getCarEngineStoreCapacity() { return carEngineStore.getCapacity(); }
 
     public int getCarAccessoryStoreSize() {
         return carAccessoryStore.getSize();
     }
-
+    public int getCarAccessoryStoreCapacity() { return carAccessoryStore.getCapacity(); }
 
     public BigDecimal getDealerCarPrice() {
         return dealer.getCarPrice();

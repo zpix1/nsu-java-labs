@@ -45,12 +45,18 @@ public class FactoryWindow extends JFrame {
         setLayout(new BorderLayout());
 
         var mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
+
+        mainPanel.setLayout(new GridBagLayout());
+
+        var gbc = new GridBagConstraints();
+
         getContentPane().add(mainPanel);
 
         {
             var storageStatePanel = new BorderedPanel("Storage state");
-            mainPanel.add(storageStatePanel, BorderLayout.NORTH);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            mainPanel.add(storageStatePanel, gbc);
 
             carBodyStoreSizeLabel = new JLabel();
             storageStatePanel.addIn(carBodyStoreSizeLabel);
@@ -64,7 +70,9 @@ public class FactoryWindow extends JFrame {
 
         {
             var factoryStatePanel = new BorderedPanel("Factory state");
-            mainPanel.add(factoryStatePanel, BorderLayout.SOUTH);
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            mainPanel.add(factoryStatePanel, gbc);
 
             carPriceLabel = new JLabel();
             factoryStatePanel.addIn(carPriceLabel);
@@ -76,21 +84,35 @@ public class FactoryWindow extends JFrame {
             factoryStatePanel.addIn(buildStateLabel);
         }
 
-        var timer = new Timer(1000, (ActionEvent e) -> {
-            carPriceLabel.setText("Car price: " + new DecimalFormat("#0.##").format(factory.getDealerCarPrice()));
-            carBodyStoreSizeLabel.setText("Car body storage size: " + factory.getCarBodyStoreSize());
-            carEngineStoreSizeLabel.setText("Car engine storage size: " + factory.getCarEngineStoreSize());
-            carAccessoryStoreSizeLabel.setText("Car accessory storage size: " + factory.getCarAccessoryStoreSize());
-            totalSoldLabel.setText("Total sold: " + factory.getTotalSold());
-            buildStateLabel.setText("Build state: " + (factory.isBuildingPaused() ? "paused" : "running"));
-            pack();
+        {
+            var factoryControlPanel = new BorderedPanel("Factory controls");
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.gridwidth = 2;
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            mainPanel.add(factoryControlPanel, gbc);
+        }
+
+        var timer = new Timer(200, (ActionEvent e) -> {
+            updateInformation();
         });
         timer.start();
 
+        updateInformation();
         pack();
         setPreferredSize(new Dimension(500, 500));
         setVisible(true);
     }
+
+    private void updateInformation() {
+        carPriceLabel.setText("Car price: " + new DecimalFormat("#0.##").format(factory.getDealerCarPrice()));
+        carBodyStoreSizeLabel.setText("Car body storage size: " + factory.getCarBodyStoreSize() + " / " + factory.getCarBodyStoreCapacity());
+        carEngineStoreSizeLabel.setText("Car engine storage size: " + factory.getCarEngineStoreSize() + " / " + factory.getCarEngineStoreCapacity());
+        carAccessoryStoreSizeLabel.setText("Car accessory storage size: " + factory.getCarAccessoryStoreSize() + " / " + factory.getCarAccessoryStoreCapacity());
+        totalSoldLabel.setText("Total sold: " + factory.getTotalSold());
+        buildStateLabel.setText("Build state: " + (factory.isBuildingPaused() ? "paused" : "running"));
+    }
+
 
     void initStateLabels() {
 
