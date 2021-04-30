@@ -9,15 +9,17 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class ThreadPool {
+    private final static Logger logger = LogManager.getLogger();
+
     private final BlockingQueue<Task> queue;
-    private volatile boolean isRunning = true;
-    private final Logger logger = LogManager.getLogger();
     private final Set<TaskWorker> workers = new HashSet<>();
+    private volatile boolean isRunning = true;
 
     public ThreadPool(int threadCount, int queueSize) {
         queue = new ArrayBlockingQueue<>(queueSize);
         for (int i = 0; i < threadCount; i++) {
             var tw = new TaskWorker();
+            tw.setName(Integer.toString(i));
             tw.start();
             workers.add(tw);
         }
@@ -37,7 +39,7 @@ public class ThreadPool {
 
     public void interruptAll() {
         if (isRunning) throw new RuntimeException("can't join interrupt threads");
-        for (var t: workers) {
+        for (var t : workers) {
             t.interrupt();
         }
     }

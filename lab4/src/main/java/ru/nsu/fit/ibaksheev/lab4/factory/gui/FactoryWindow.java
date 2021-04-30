@@ -1,7 +1,5 @@
 package ru.nsu.fit.ibaksheev.lab4.factory.gui;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.ibaksheev.lab4.factory.Factory;
 
 import javax.swing.*;
@@ -12,8 +10,6 @@ import java.text.DecimalFormat;
 import java.util.Hashtable;
 
 public class FactoryWindow extends JFrame {
-    private final Logger logger = LogManager.getLogger();
-
     private static final int DELAY_VARIETY = 10;
 
     private Factory factory;
@@ -57,7 +53,7 @@ public class FactoryWindow extends JFrame {
         var label = new JLabel(description + startingDelay);
 
         slider.addChangeListener(e -> {
-            int value = ((JSlider)e.getSource()).getValue();
+            int value = ((JSlider) e.getSource()).getValue();
             label.setText(description + value);
             listener.valueChanged(value);
         });

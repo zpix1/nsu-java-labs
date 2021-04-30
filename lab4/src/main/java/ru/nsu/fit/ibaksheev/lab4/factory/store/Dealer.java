@@ -26,7 +26,13 @@ public class Dealer {
     private void priceChanger() {
         while (true) {
             double deltaK = random.nextGaussian();
-            carPrice = carPrice.add(delta.multiply(BigDecimal.valueOf(deltaK)));
+            // change to private lock object if needed
+            synchronized (this) {
+                var newPrice = carPrice.add(delta.multiply(BigDecimal.valueOf(deltaK)));
+                if (newPrice.compareTo(BigDecimal.ZERO) > 0) {
+                    carPrice = carPrice.add(delta.multiply(BigDecimal.valueOf(deltaK)));
+                }
+            }
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {

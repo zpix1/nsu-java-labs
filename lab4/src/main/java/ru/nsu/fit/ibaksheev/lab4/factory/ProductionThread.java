@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 public class ProductionThread<T> extends Thread {
     private final Supplier<T> supplier;
     private final Consumer<T> store;
-    private boolean isRunning = true;
+    private volatile boolean isRunning = true;
 
     public ProductionThread(Supplier<T> supplier, Consumer<T> store) {
         this.store = store;

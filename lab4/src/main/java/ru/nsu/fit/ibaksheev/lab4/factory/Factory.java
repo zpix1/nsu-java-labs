@@ -21,7 +21,7 @@ import java.util.Properties;
 
 public class Factory {
     private final static String propertiesFilename = "/factory.properties";
-    private final Logger logger = LogManager.getLogger();
+    private final static Logger logger = LogManager.getLogger(Factory.class);
 
     private final CarBodySupplier carBodySupplier;
     private final CarEngineSupplier carEngineSupplier;
@@ -135,8 +135,15 @@ public class Factory {
     public int getCarBodyStoreSize() {
         return carBodyStore.getSize();
     }
-    public int getCarBodyStoreCapacity() { return carBodyStore.getCapacity(); }
-    public int getCarBodySupplierDelay() { return carBodySupplier.getDelay(); }
+
+    public int getCarBodyStoreCapacity() {
+        return carBodyStore.getCapacity();
+    }
+
+    public int getCarBodySupplierDelay() {
+        return carBodySupplier.getDelay();
+    }
+
     public void setCarBodySupplierDelay(int delay) {
         carBodySupplier.setDelay(delay);
     }
@@ -144,8 +151,15 @@ public class Factory {
     public int getCarEngineStoreSize() {
         return carEngineStore.getSize();
     }
-    public int getCarEngineStoreCapacity() { return carEngineStore.getCapacity(); }
-    public int getCarEngineSupplierDelay() { return carEngineSupplier.getDelay(); }
+
+    public int getCarEngineStoreCapacity() {
+        return carEngineStore.getCapacity();
+    }
+
+    public int getCarEngineSupplierDelay() {
+        return carEngineSupplier.getDelay();
+    }
+
     public void setCarEngineSupplierDelay(int delay) {
         carEngineSupplier.setDelay(delay);
     }
@@ -153,8 +167,15 @@ public class Factory {
     public int getCarAccessoryStoreSize() {
         return carAccessoryStore.getSize();
     }
-    public int getCarAccessoryStoreCapacity() { return carAccessoryStore.getCapacity(); }
-    public int getCarAccessorySupplierDelay() { return carAccessorySupplier.getDelay(); }
+
+    public int getCarAccessoryStoreCapacity() {
+        return carAccessoryStore.getCapacity();
+    }
+
+    public int getCarAccessorySupplierDelay() {
+        return carAccessorySupplier.getDelay();
+    }
+
     public void setCarAccessorySupplierDelay(int delay) {
         carAccessorySupplier.setDelay(delay);
     }
@@ -166,6 +187,7 @@ public class Factory {
     public int getTotalSold() {
         return carDealController.getTotalSold();
     }
+
     public BigDecimal getTotalGain() {
         return carDealController.getTotalGain();
     }

@@ -12,13 +12,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class CarDealController extends Thread {
+    private static final Logger logger = LogManager.getLogger(CarDealController.class);
+
     private final Supplier<Car> outputStore;
     private final ThreadPool threadPool;
     private final AtomicInteger totalSold = new AtomicInteger(0);
     private BigDecimal totalGain = BigDecimal.ZERO;
 
     private final Dealer dealer;
-    private final Logger logger = LogManager.getLogger();
     private volatile boolean isRunning = true;
 
     public CarDealController(Supplier<Car> outputStore, Dealer dealer) {
@@ -68,6 +69,7 @@ public class CarDealController extends Thread {
                 public void performWork() {
                     totalSold.incrementAndGet();
                     addMoney(dealer.sell(car));
+                    logger.info("Sold car to dealer " + Thread.currentThread().getName() +  ": " + car);
                 }
             };
             threadPool.addTask(task);

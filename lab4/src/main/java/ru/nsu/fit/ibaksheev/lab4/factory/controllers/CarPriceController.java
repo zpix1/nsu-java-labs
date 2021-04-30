@@ -12,7 +12,7 @@ public class CarPriceController extends Thread {
 
     private final Dealer dealer;
     private final FactoryProductionControlAdapter adapter;
-    private final Logger logger = LogManager.getLogger();
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
     public CarPriceController(Dealer dealer, FactoryProductionControlAdapter adapter) {
         this.dealer = dealer;
