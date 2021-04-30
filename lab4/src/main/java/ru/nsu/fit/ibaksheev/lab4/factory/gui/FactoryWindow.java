@@ -44,7 +44,7 @@ public class FactoryWindow extends JFrame {
     private Box createSlider(Integer startingDelay, String description, SliderListener listener) {
         var panel = new Box(BoxLayout.Y_AXIS);
 
-        int min = startingDelay / DELAY_VARIETY;
+        int min = 0; //startingDelay / DELAY_VARIETY;
         int max = startingDelay * DELAY_VARIETY;
         var slider = new JSlider(min, max, startingDelay);
 

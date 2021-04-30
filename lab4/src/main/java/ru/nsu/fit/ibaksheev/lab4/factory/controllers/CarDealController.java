@@ -15,11 +15,11 @@ public class CarDealController extends Thread {
     private final Supplier<Car> outputStore;
     private final ThreadPool threadPool;
     private final AtomicInteger totalSold = new AtomicInteger(0);
-    private BigDecimal totalGain = new BigDecimal(0);
+    private BigDecimal totalGain = BigDecimal.ZERO;
 
     private final Dealer dealer;
     private final Logger logger = LogManager.getLogger();
-    private boolean isRunning = true;
+    private volatile boolean isRunning = true;
 
     public CarDealController(Supplier<Car> outputStore, Dealer dealer) {
         this.dealer = dealer;
@@ -32,7 +32,7 @@ public class CarDealController extends Thread {
         return totalSold.intValue();
     }
 
-    public BigDecimal getTotalGain() {
+    public synchronized BigDecimal getTotalGain() {
         return totalGain;
     }
 

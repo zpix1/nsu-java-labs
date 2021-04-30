@@ -19,15 +19,14 @@ public class CarBuildController extends Thread {
     private final Supplier<CarAccessory> carAccessoryStore;
     private final Consumer<Car> outputStore;
     private final ThreadPool threadPool;
-    private boolean isRunning = true;
+    private volatile boolean isRunning = true;
 
     private final Lock pauseLock = new ReentrantLock();
-    private Boolean pause = false;
+    private volatile Boolean pause = false;
 
     public Boolean isPaused() {
         return pause;
     }
-//    private final Lock pauseLock = new ReentrantLock();
 
     public CarBuildController(Supplier<CarBody> carBodyStore, Supplier<CarEngine> carEngineStore, Supplier<CarAccessory> carAccessoryStore, Consumer<Car> outputStore) {
         this.carBodyStore = carBodyStore;
@@ -49,7 +48,6 @@ public class CarBuildController extends Thread {
         pause = false;
         pauseLock.unlock();
     }
-
 
     public void shutdown() {
         isRunning = false;

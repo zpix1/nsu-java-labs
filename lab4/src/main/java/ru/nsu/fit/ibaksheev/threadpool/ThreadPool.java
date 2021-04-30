@@ -10,7 +10,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class ThreadPool {
     private final BlockingQueue<Task> queue;
-    private boolean isRunning = true;
+    private volatile boolean isRunning = true;
     private final Logger logger = LogManager.getLogger();
     private final Set<TaskWorker> workers = new HashSet<>();
 

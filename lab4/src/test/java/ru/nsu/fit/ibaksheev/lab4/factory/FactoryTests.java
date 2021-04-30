@@ -19,6 +19,7 @@ public class FactoryTests {
         logger.info("shutting down");
         factory.shutdown(true);
         logger.info("done");
-        assertNotEquals(0, factory.getTotalSold());
+        assertNotEquals(0, factory.getTotalSold(), "factory should sell cars");
+        assertTrue(factory.getTotalGain().doubleValue() / factory.getTotalSold() > 500, "factory should be efficient");
     }
 }
