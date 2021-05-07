@@ -21,9 +21,9 @@ public class CarBuildController extends Thread {
     private volatile boolean isRunning = true;
 
     private final Object pauseObject = new Object();
-    private volatile Boolean pause = false;
+    private volatile boolean pause = false;
 
-    public Boolean isPaused() {
+    public boolean isPaused() {
         return pause;
     }
 
