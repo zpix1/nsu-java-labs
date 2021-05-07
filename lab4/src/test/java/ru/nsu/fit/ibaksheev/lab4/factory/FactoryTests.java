@@ -3,7 +3,6 @@ package ru.nsu.fit.ibaksheev.lab4.factory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
-import ru.nsu.fit.ibaksheev.lab4.factory.Factory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
@@ -17,7 +16,7 @@ public class FactoryTests {
         factory.start();
         Thread.sleep(30000);
         logger.info("shutting down");
-        factory.shutdown(true);
+        factory.shutdown();
         logger.info("done");
         assertNotEquals(0, factory.getTotalSold(), "factory should sell cars");
         assertTrue(factory.getTotalGain().doubleValue() / factory.getTotalSold() > 500, "factory should be efficient");

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 
 public class ThreadPool {
     private final static Logger logger = LogManager.getLogger();
@@ -26,6 +27,9 @@ public class ThreadPool {
     }
 
     public void addTask(Task command) {
+        if (!isRunning) {
+            throw new RejectedExecutionException();
+        }
         try {
             queue.put(command);
         } catch (InterruptedException e) {
@@ -35,6 +39,14 @@ public class ThreadPool {
 
     public void shutdown() {
         isRunning = false;
+        interruptAll();
+        for (var t : workers) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException("double interrupt detected");
+            }
+        }
     }
 
     public void interruptAll() {

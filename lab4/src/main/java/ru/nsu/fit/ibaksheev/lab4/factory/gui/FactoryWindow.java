@@ -163,7 +163,7 @@ public class FactoryWindow extends JFrame {
 
     @Override
     public void dispose() {
-        factory.shutdown(true);
+        factory.shutdown();
         System.exit(0);
     }
 

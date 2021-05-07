@@ -8,7 +8,6 @@ import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarEngine;
 import ru.nsu.fit.ibaksheev.threadpool.Task;
 import ru.nsu.fit.ibaksheev.threadpool.ThreadPool;
 
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -21,7 +20,7 @@ public class CarBuildController extends Thread {
     private final ThreadPool threadPool;
     private volatile boolean isRunning = true;
 
-    private final Lock pauseLock = new ReentrantLock();
+    private final Object pauseObject = new Object();
     private volatile Boolean pause = false;
 
     public Boolean isPaused() {
@@ -40,13 +39,12 @@ public class CarBuildController extends Thread {
     public void pauseProduction() {
         if (pause) throw new RuntimeException("double pause detected");
         pause = true;
-        pauseLock.lock();
     }
 
     public void continueProduction() {
         if (!pause) throw new RuntimeException("double continue detected");
         pause = false;
-        pauseLock.unlock();
+        pauseObject.notifyAll();
     }
 
     public void shutdown() {
@@ -87,9 +85,14 @@ public class CarBuildController extends Thread {
             threadPool.addTask(task);
 
             if (pause) {
-                // how to do it normally?
-                pauseLock.lock();
-                pauseLock.unlock();
+                synchronized (pauseObject) {
+                    try {
+                        do {
+                            pauseObject.wait();
+                        } while (pause);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
             }
         }
     }

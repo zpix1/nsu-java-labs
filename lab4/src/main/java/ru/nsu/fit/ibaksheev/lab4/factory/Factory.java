@@ -108,7 +108,7 @@ public class Factory {
         logger.info("Controllers started");
     }
 
-    public void shutdown(boolean interrupt) {
+    public void shutdown() {
         logger.info("Shutdown issued");
 
         carBodyProductionThread.shutdown();
@@ -117,19 +117,6 @@ public class Factory {
 
         carBuildController.shutdown();
         carDealController.shutdown();
-
-        if (interrupt) {
-            logger.info("Interrupting producer threads");
-
-            carBodyProductionThread.interrupt();
-            carEngineProductionThread.interrupt();
-            carAccessoryProductionThread.interrupt();
-
-            logger.info("Interrupting controller threads");
-
-            carBuildController.interruptAll();
-            carDealController.interruptAll();
-        }
     }
 
     public int getCarBodyStoreSize() {

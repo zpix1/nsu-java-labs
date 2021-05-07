@@ -8,7 +8,7 @@ import java.util.Random;
 public class Dealer {
     private static final int DEFAULT_CAR_PRICE = 500;
     private static final int DEFAULT_CAR_DELTA = 100;
-    private static final Random random = new Random();
+    private final Random random = new Random();
     private final BigDecimal delta = new BigDecimal(DEFAULT_CAR_DELTA);
 
     private BigDecimal carPrice = new BigDecimal(DEFAULT_CAR_PRICE);
