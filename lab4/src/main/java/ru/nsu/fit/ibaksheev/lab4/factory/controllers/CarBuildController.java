@@ -8,7 +8,6 @@ import ru.nsu.fit.ibaksheev.lab4.factory.parts.CarEngine;
 import ru.nsu.fit.ibaksheev.threadpool.Task;
 import ru.nsu.fit.ibaksheev.threadpool.ThreadPool;
 
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -18,14 +17,9 @@ public class CarBuildController extends Thread {
     private final Supplier<CarAccessory> carAccessoryStore;
     private final Consumer<Car> outputStore;
     private final ThreadPool threadPool;
-    private volatile boolean isRunning = true;
-
     private final Object pauseObject = new Object();
+    private volatile boolean isRunning = true;
     private volatile boolean pause = false;
-
-    public boolean isPaused() {
-        return pause;
-    }
 
     public CarBuildController(Supplier<CarBody> carBodyStore, Supplier<CarEngine> carEngineStore, Supplier<CarAccessory> carAccessoryStore, Consumer<Car> outputStore) {
         this.carBodyStore = carBodyStore;
@@ -34,6 +28,10 @@ public class CarBuildController extends Thread {
         this.outputStore = outputStore;
 
         threadPool = new ThreadPool(4, 1000);
+    }
+
+    public boolean isPaused() {
+        return pause;
     }
 
     public void pauseProduction() {

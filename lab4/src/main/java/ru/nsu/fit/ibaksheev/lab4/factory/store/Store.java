@@ -1,17 +1,17 @@
 package ru.nsu.fit.ibaksheev.lab4.factory.store;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import ru.nsu.fit.ibaksheev.myblockingqueue.MyBlockingQueue;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Store<T> implements Supplier<T>, Consumer<T> {
     private final int storeSize;
-    private final BlockingQueue<T> store;
+    private final MyBlockingQueue<T> store;
 
     public Store(int storeSize) {
         this.storeSize = storeSize;
-        store = new ArrayBlockingQueue<>(storeSize);
+        store = new MyBlockingQueue<>(storeSize);
     }
 
     public int getSize() {
